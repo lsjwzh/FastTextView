@@ -1,8 +1,12 @@
 package com.lsjwzh.widget.text;
 
 import android.content.Context;
+import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.text.Layout;
@@ -21,23 +25,54 @@ public class FastTextView extends FastTextLayoutView {
   private static final String TAG = FastTextView.class.getSimpleName();
   private CharSequence mText;
   private TextPaint mTextPaint = new TextPaint();
-
+  private int mSpacingAdd;
+  private float mSpacingMultiplier = 1f;
+  private int mMaxWidth;
 
   public FastTextView(Context context) {
-    super(context);
+    this(context, null);
   }
 
   public FastTextView(Context context, @Nullable AttributeSet attrs) {
-    super(context, attrs);
+    this(context, attrs, -1);
   }
 
   public FastTextView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
     super(context, attrs, defStyleAttr);
+    init(context, attrs, defStyleAttr, -1);
   }
 
   @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
   public FastTextView(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
     super(context, attrs, defStyleAttr, defStyleRes);
+    init(context, attrs, defStyleAttr, defStyleRes);
+  }
+
+  private void init(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    final Resources.Theme theme = context.getTheme();
+    TextPaint textPaint = getTextPaint();
+    TypedArray a = theme.obtainStyledAttributes(attrs,
+        com.android.internal.R.styleable.TextViewAppearance, defStyleAttr, defStyleRes);
+    int n = a.getIndexCount();
+    for (int i = 0; i < n; i++) {
+      int attr = a.getIndex(i);
+      switch (attr) {
+        case com.android.internal.R.styleable.TextView_textColor:
+          // Do not support ColorState
+          textPaint.setColor(a.getColor(attr, Color.BLACK));
+          break;
+        case com.android.internal.R.styleable.TextView_textSize:
+          textPaint.setTextSize(a.getDimensionPixelSize(attr, (int) textPaint.getTextSize()));
+          break;
+        case com.android.internal.R.styleable.TextView_lineSpacingExtra:
+          mSpacingAdd = a.getDimensionPixelSize(attr, mSpacingAdd);
+          break;
+        case com.android.internal.R.styleable.TextView_lineSpacingMultiplier:
+          mSpacingMultiplier = a.getFloat(attr, mSpacingMultiplier);
+          break;
+      }
+    }
+
   }
 
   @Override
@@ -71,17 +106,21 @@ public class FastTextView extends FastTextLayoutView {
       return;
     }
     if (mText != text) {
-      int width;
-      if (text instanceof Spanned) {
-        width = (int) Math.ceil(Layout.getDesiredWidth(text, mTextPaint));
-      } else {
-        width = (int) Math.ceil(mTextPaint.measureText(text, 0, text.length()));
-      }
-      StaticLayout layout = new StaticLayout(text, mTextPaint,
-          width, Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, true);
-      setTextLayout(layout);
+      setTextLayout(makeLayout(text));
     }
     mText = text;
+  }
+
+  @NonNull
+  private StaticLayout makeLayout(CharSequence text) {
+    int width;
+    if (text instanceof Spanned) {
+      width = (int) Math.ceil(Layout.getDesiredWidth(text, mTextPaint));
+    } else {
+      width = (int) Math.ceil(mTextPaint.measureText(text, 0, text.length()));
+    }
+    return new StaticLayout(text, mTextPaint, Math.min(mMaxWidth, width),
+        Layout.Alignment.ALIGN_NORMAL, mSpacingMultiplier, mSpacingAdd, true);
   }
 
   public CharSequence getText() {
@@ -92,14 +131,19 @@ public class FastTextView extends FastTextLayoutView {
     setTextSize(textSize, TypedValue.COMPLEX_UNIT_SP);
   }
 
+  public void setMaxWidth(int width) {
+    mMaxWidth = width;
+    if (getTextLayout() != null && !TextUtils.isEmpty(mText)) {
+      setTextLayout(makeLayout(mText));
+    }
+  }
 
   /**
    * Set the default text size to a given unit and value.  See {@link
    * TypedValue} for the possible dimension units.
    *
    * @param textSize The desired size in the given units.
-   * @param unit The desired dimension unit.
-   *
+   * @param unit     The desired dimension unit.
    * @attr ref android.R.styleable#TextView_textSize
    */
   public void setTextSize(float textSize, int unit) {
