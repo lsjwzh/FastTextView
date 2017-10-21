@@ -18,6 +18,13 @@ buildscript {
 Properties properties = new Properties()
 properties.load(project.rootProject.file('local.properties').newDataInputStream())
 allprojects {
+    gradle.taskGraph.whenReady {
+        tasks.each { task ->
+            if (task.name.equals('mockableAndroidJar')) {
+                task.enabled = false
+            }
+        }
+    }
     repositories {
         maven {
             url "https://dl.bintray.com/lsjwzh/maven"
