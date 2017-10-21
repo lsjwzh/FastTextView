@@ -144,7 +144,6 @@ public class FastTextView extends FastTextLayoutView {
    *
    * @param textSize The desired size in the given units.
    * @param unit     The desired dimension unit.
-   * @attr ref android.R.styleable#TextView_textSize
    */
   public void setTextSize(float textSize, int unit) {
     float rawTextSize = TypedValue.applyDimension(

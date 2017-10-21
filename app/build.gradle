@@ -28,4 +28,6 @@ dependencies {
     compile 'com.android.support.constraint:constraint-layout:1.0.0-beta4'
     compile 'com.android.support:design:25.3.1'
     compile project(':widget.FastTextView')
+//    compile 'com.lsjwzh.widget:FastTextView:0.9.3'
+
 }
