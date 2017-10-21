@@ -6,7 +6,7 @@ apply plugin: "maven-publish"
 ext {
     siteUrl = 'https://github.com/lsjwzh/FastTextView'
     gitUrl = 'https://github.com/lsjwzh/FastTextView.git'
-    libVersion = '0.9.3'
+    libVersion = '0.9.4'
 }
 
 group = 'com.lsjwzh'
