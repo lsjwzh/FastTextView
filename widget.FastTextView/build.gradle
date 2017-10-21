@@ -4,7 +4,12 @@ apply plugin: 'com.jfrog.bintray'
 apply plugin: "maven-publish"
 
 group = 'com.github.lsjwzh'
-version = '0.9.1'
+
+ext {
+    siteUrl = 'https://github.com/lsjwzh/FastTextView'
+    gitUrl = 'https://github.com/lsjwzh/FastTextView.git'
+    libVersion = '0.9.1'
+}
 
 android {
     compileSdkVersion 25
@@ -13,8 +18,8 @@ android {
     defaultConfig {
         minSdkVersion 15
         targetSdkVersion 25
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName libVersion
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -37,12 +42,62 @@ dependencies {
 }
 
 
-task sourcesJar(type: Jar) {
-    from android.sourceSets.main.java.srcDirs
-    classifier = 'sources'
+install {
+    repositories.mavenInstaller {
+        // This generates POM.xml with proper parameters
+        pom {
+            project {
+                packaging 'aar'
+                name 'FastTextView'
+                url siteUrl
+                // Set your license
+                licenses {
+                    license {
+                        name 'The Apache Software License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer { //填写的一些基本信息
+                        id 'lsjwzh'
+                        name 'lsjwzh'
+                        email 'lsjwzh@gmail.com'
+                    }
+                }
+                scm {
+                    connection gitUrl
+                    developerConnection gitUrl
+                    url siteUrl
+                }
+            }
+        }
+    }
+}
+
+if (project.hasProperty("android")) { // Android libraries
+    task sourcesJar(type: Jar) {
+        classifier = 'sources'
+        from android.sourceSets.main.java.srcDirs
+    }
+
+    task javadoc(type: Javadoc) {
+        source = android.sourceSets.main.java.srcDirs
+        classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+    }
+} else { // Java libraries
+    task sourcesJar(type: Jar, dependsOn: classes) {
+        classifier = 'sources'
+        from sourceSets.main.allSource
+    }
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
 }
 
 artifacts {
+//    archives javadocJar
     archives sourcesJar
 }
 
@@ -50,16 +105,23 @@ bintray {
     user = System.getenv('BINTRAY_USER')
     key = System.getenv('BINTRAY_KEY')
     publications = ['MyPublication']
+    configurations = ['archives']
+    filesSpec {
+        from 'build/libs'
+        into '.'
+    }
     pkg {
         repo = 'maven'
         name = 'fasttextview'
         licenses = ['Apache-2.0']
         vcsUrl = 'https://github.com/lsjwzh/FastTextView.git'
+        publish = true
+        publicDownloadNumbers = true
         version {
-            name = '0.9.1'
+            name = libVersion
             desc = 'FastTextView'
             released = new Date()
-            vcsTag = '0.9.1'
+            vcsTag = libVersion
         }
     }
 }
@@ -70,7 +132,7 @@ publishing {
         MyPublication(MavenPublication) {
             groupId 'com.lsjwzh.widget'
             artifactId 'FastTextView'
-            version '0.9.1'
+            version libVersion
         }
     }
 }
