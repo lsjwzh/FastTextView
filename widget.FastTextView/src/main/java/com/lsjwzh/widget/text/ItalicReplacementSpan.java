@@ -11,19 +11,19 @@ import android.text.style.ReplacementSpan;
 /**
  * Use getTextBounds to measure Italic text.
  * Since that TextPaint.measureText can not measure Italic text correctly.
- * Note:ItalicSpan can not include other ReplacementSpan, If you do this you will get incorrect with.
+ * Note:ItalicReplacementSpan can not include other ReplacementSpan, If you do this you will get incorrect with.
  */
-public class ItalicSpan extends ReplacementSpan {
+public class ItalicReplacementSpan extends ReplacementSpan {
   public static final float DEFAULT_ITALIC_VALUE = -0.25f;
   private Rect mRect = new Rect();
   private float mTextSkewX = DEFAULT_ITALIC_VALUE; // -0.25f is default value for Italic style.
 
-  public ItalicSpan() {
+  public ItalicReplacementSpan() {
     this(DEFAULT_ITALIC_VALUE);
   }
 
 
-  public ItalicSpan(float textSkewX) {
+  public ItalicReplacementSpan(float textSkewX) {
     mTextSkewX = textSkewX;
   }
 

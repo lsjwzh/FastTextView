@@ -57,7 +57,7 @@ public class TextMeasureUtil {
   public static void getTextBounds(Paint paint, CharSequence text, @IntRange(from = 0) int start, @IntRange(from = 0) int end, Rect rect) {
     char[] currentText = new char[end - start];
     TextUtils.getChars(text, start, end, currentText, 0);
-    paint.getTextBounds(currentText, start, end - start, rect);
+    paint.getTextBounds(currentText, 0, end - start, rect);
   }
 
   public static List<ReplacementSpan> getSortedReplacementSpans(final Spanned spanned, int start, int end) {

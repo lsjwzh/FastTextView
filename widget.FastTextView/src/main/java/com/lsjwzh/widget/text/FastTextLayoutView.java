@@ -15,7 +15,7 @@ import android.view.View;
  */
 public class FastTextLayoutView extends View {
   private static final String TAG = FastTextLayoutView.class.getSimpleName();
-  private Layout mLayout;
+  protected Layout mLayout;
 
   public FastTextLayoutView(Context context) {
     super(context);

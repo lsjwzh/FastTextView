@@ -2,6 +2,7 @@ package com.lsjwzh.widget.text;
 
 import android.text.style.ReplacementSpan;
 
+// TODO
 public abstract class NestReplacementSpan extends ReplacementSpan {
   private boolean mNestSpanEnabled = false;
 

@@ -3,32 +3,27 @@ package com.wechat.testdemo;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.text.BoringLayout;
 import android.text.Layout;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.StaticLayout;
 import android.text.TextPaint;
-import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.text.style.ImageSpan;
-import android.text.style.StyleSpan;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.lsjwzh.widget.text.FastTextLayoutView;
-import com.lsjwzh.widget.text.ItalicSpan;
+import com.lsjwzh.widget.text.FastTextView;
 import com.lsjwzh.widget.text.StrokeSpan;
 import com.lsjwzh.widget.text.TextMeasureUtil;
 
@@ -46,27 +41,7 @@ public class MainActivityFragment extends Fragment {
       return mRootView;
     }
     mRootView = inflater.inflate(R.layout.fragment_main, container, false);
-    SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder("xWz0 position hello world-xW");
-//    spannableStringBuilder.setSpan(new ClickableSpan() {
-//      @Override
-//      public void onClick(View widget) {
-//        Toast.makeText(getActivity(), "test", Toast.LENGTH_LONG).show();
-//      }
-//
-//      @Override
-//      public void updateDrawState(TextPaint ds) {
-//        super.updateDrawState(ds);
-////        ds.setStyle(Paint.Style.FILL_AND_STROKE);
-//        ds.setColor(Color.RED);
-//      }
-//    }, 2, 13, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-//    Drawable drawable = getResources().getDrawable(R.mipmap.ic_launcher);
-//    drawable.setBounds(0, 0, 35, 35);
-//    spannableStringBuilder.setSpan(new ImageSpan(drawable)
-//    , 1, 2, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-//    ItalicSpan italicSpan = new ItalicSpan(-0.25f);
-    StrokeSpan strokeSpan = new StrokeSpan(Color.BLUE, Color.YELLOW, 20);
-    spannableStringBuilder.setSpan(strokeSpan, 0, spannableStringBuilder.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+    SpannableStringBuilder spannableStringBuilder = getSpannable();
 
     FastTextLayoutView fastTextLayoutView = (FastTextLayoutView) mRootView.findViewById(R.id.fast_tv);
     TextPaint textPaint = new TextPaint();
@@ -101,6 +76,15 @@ public class MainActivityFragment extends Fragment {
     }
     end = SystemClock.elapsedRealtime();
     Log.d("test", "withWithDesiredWidth:" + withWithDesiredWidth + " cost:" + (end - start));
+
+
+    start = SystemClock.elapsedRealtime();
+    for (int i = 0; i < 1000; i++) {
+      spannableStringBuilder.getSpans(0, spannableStringBuilder.length(), StrokeSpan.class);
+    }
+    end = SystemClock.elapsedRealtime();
+    Log.d("test", "getSpans cost:" + (end - start));
+
     // (int) (Math.ceil(withWithDesiredWidth) + 0.5f * textSize);//
     int width = (int) Math.ceil(Math.max(Math.max(withWithTextBounds, withWithMeasureText), withWithDesiredWidth));
     StaticLayout layout = new StaticLayout(spannableStringBuilder, textPaint, width, Layout.Alignment.ALIGN_NORMAL,
@@ -116,7 +100,7 @@ public class MainActivityFragment extends Fragment {
     String testStr = "1234567890";
     TextPaint paint = new TextPaint();
     paint.setStrokeCap(Paint.Cap.ROUND);
-    paint.setStrokeWidth(10);
+    paint.setStrokeWidth(2);
     paint.setStyle(Paint.Style.FILL_AND_STROKE);
     Rect rect = new Rect();
     TextMeasureUtil.getTextBounds(paint, text, 0, 10, rect);
@@ -128,6 +112,57 @@ public class MainActivityFragment extends Fragment {
     Log.d("test", "fill getTextBounds:" + rect.width());
     measureTextWidth = paint.measureText(text, 0, 10);
     Log.d("test", "fill measureText:" + measureTextWidth);
+
+    FastTextView fastTextView = (FastTextView) mRootView.findViewById(R.id.fast_tv2);
+    fastTextView.setText(spannableStringBuilder);
     return mRootView;
+  }
+  //返回textview的显示区域的layout，该textview的layout并不会显示出来，只是用其宽度来比较要显示的文字是否过长
+//  private Layout createWorkingLayout(String workingText) {
+//    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+//      return StaticLayout.Builder.obtain(workingText, 0, workingText.length(), getPaint(), initWidth - getPaddingLeft() - getPaddingRight())
+//          .setLineSpacing(getLineSpacingExtra(), getLineSpacingMultiplier())
+//          .setAlignment(Layout.Alignment.ALIGN_NORMAL)
+//          // 注意，在textview里需要设置这两个参数，否则显示会不正常
+//          .setBreakStrategy(Layout.BREAK_STRATEGY_HIGH_QUALITY)
+//          .setHyphenationFrequency(Layout.HYPHENATION_FREQUENCY_FULL)
+//          .build();
+//    } else{
+//      return StaticLayout.Builder.obtain(workingText, 0, workingText.length(), getPaint(), initWidth - getPaddingLeft() - getPaddingRight())
+//          .setLineSpacing(lineSpaceExtra, 1.0f)
+//          .setAlignment(Layout.Alignment.ALIGN_NORMAL)
+//          // 注意，在textview里需要设置这两个参数，否则显示会不正常
+//          .setBreakStrategy(Layout.BREAK_STRATEGY_HIGH_QUALITY)
+//          .setHyphenationFrequency(Layout.HYPHENATION_FREQUENCY_FULL)
+//          .build();
+//    }
+//  }
+
+  @NonNull
+  private SpannableStringBuilder getSpannable() {
+//    SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder("xWz0 position hello world-xW");
+
+    SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder("xWz0 position hello world-xW 大厦艾弗森的v水电费萨芬的释放的发生的发的的算法大是大非的的说法的防守打法的瑟瑟发抖防守打法的算法等发达的法定范德萨范德萨的书法大师的法定水电费萨达的是 ");
+    spannableStringBuilder.setSpan(new ClickableSpan() {
+      @Override
+      public void onClick(View widget) {
+        Toast.makeText(getActivity(), "test", Toast.LENGTH_LONG).show();
+      }
+
+      @Override
+      public void updateDrawState(TextPaint ds) {
+        super.updateDrawState(ds);
+//        ds.setStyle(Paint.Style.FILL_AND_STROKE);
+        ds.setColor(Color.RED);
+      }
+    }, 2, 13, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+    Drawable drawable = getResources().getDrawable(R.mipmap.ic_launcher);
+    drawable.setBounds(0, 0, 35, 35);
+    spannableStringBuilder.setSpan(new ImageSpan(drawable)
+        , 1, 2, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+//    ItalicReplacementSpan italicSpan = new ItalicReplacementSpan(-0.25f);
+    StrokeSpan strokeSpan = new StrokeSpan(Color.BLUE, Color.YELLOW, 20);
+    spannableStringBuilder.setSpan(strokeSpan, 0, spannableStringBuilder.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+    return spannableStringBuilder;
   }
 }

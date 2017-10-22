@@ -16,6 +16,15 @@
     android:layout_height="wrap_content"
     android:clickable="true"/>
 
+  <com.lsjwzh.test.FastTextView
+    android:id="@+id/fast_tv2"
+    android:layout_marginTop="20dp"
+    android:background="#6600ffff"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:textSize="20sp"
+    android:clickable="true"/>
+
   <com.wechat.testdemo.TestTextView
     android:id="@+id/system_tv"
     android:background="#6600ffff"
@@ -24,18 +33,5 @@
     android:layout_marginTop="20dp"
     android:textColor="#ffffff"
     android:textSize="20sp"/>
-
-  <EditText
-    android:id="@+id/edit"
-    android:layout_width="match_parent"
-    android:layout_height="20dp"
-    android:layout_marginTop="40dp"
-    android:background="#00ffffff"
-    android:shadowColor="#ffffff"
-    android:text="2222"
-    android:textColor="#ffffff"
-    android:textColorHighlight="#ffffff"
-    android:textColorHint="#ffffff"
-    android:textColorLink="#ffffff"/>
 
 </LinearLayout>

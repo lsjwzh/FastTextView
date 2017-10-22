@@ -6,13 +6,17 @@ apply plugin: "maven-publish"
 ext {
     siteUrl = 'https://github.com/lsjwzh/FastTextView'
     gitUrl = 'https://github.com/lsjwzh/FastTextView.git'
-    libVersion = '0.9.4'
+    libVersion = '0.9.7'
 }
 
 group = 'com.lsjwzh'
 version = libVersion
 
 android {
+    lintOptions {
+        abortOnError false
+    }
+
     compileSdkVersion 25
     buildToolsVersion "25.0.3"
 
