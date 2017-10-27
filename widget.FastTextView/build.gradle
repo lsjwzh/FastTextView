@@ -3,8 +3,6 @@ apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.jfrog.bintray'
 apply plugin: "maven-publish"
 
-group = 'com.lsjwzh'
-version = libVersion
 
 Properties properties = new Properties()
 properties.load(project.rootProject.file('local.properties').newDataInputStream())
@@ -14,6 +12,9 @@ ext {
     gitUrl = properties.getProperty("gitUrl")
     libVersion = '0.9.7'
 }
+
+group = 'com.lsjwzh'
+version = libVersion
 
 android {
     lintOptions {
@@ -167,7 +168,7 @@ publishing {
             artifact sourcesJar
             artifact javadocJar
             artifact("$buildDir/outputs/aar/$project.name-release.aar")
-            groupId 'com.lsjwzh.widget'
+            groupId properties.getProperty('project.groudId')
             artifactId properties.getProperty('project.name')
             version libVersion
             pom.withXml {
