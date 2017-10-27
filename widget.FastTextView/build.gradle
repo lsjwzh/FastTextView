@@ -3,14 +3,17 @@ apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.jfrog.bintray'
 apply plugin: "maven-publish"
 
-ext {
-    siteUrl = 'https://github.com/lsjwzh/FastTextView'
-    gitUrl = 'https://github.com/lsjwzh/FastTextView.git'
-    libVersion = '0.9.7'
-}
-
 group = 'com.lsjwzh'
 version = libVersion
+
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
+ext {
+    siteUrl = properties.getProperty("siteUrl")
+    gitUrl = properties.getProperty("gitUrl")
+    libVersion = '0.9.7'
+}
 
 android {
     lintOptions {
@@ -54,7 +57,7 @@ install {
         pom {
             project {
                 packaging 'aar'
-                name 'FastTextView'
+                name properties.getProperty('project.name')
                 url siteUrl
                 // Set your license
                 licenses {
@@ -65,9 +68,9 @@ install {
                 }
                 developers {
                     developer { //填写的一些基本信息
-                        id 'lsjwzh'
-                        name 'lsjwzh'
-                        email 'lsjwzh@gmail.com'
+                        id properties.getProperty("developer.name")
+                        name properties.getProperty("developer.name")
+                        email properties.getProperty("developer.email")
                     }
                 }
                 scm {
@@ -136,9 +139,6 @@ artifacts {
     archives file("$buildDir/outputs/aar/$name-release.aar")
 }
 
-
-Properties properties = new Properties()
-properties.load(project.rootProject.file('local.properties').newDataInputStream())
 // Create the pom configuration:
 def pomConfig = {
     licenses {
@@ -149,15 +149,15 @@ def pomConfig = {
         }
     }
     developers {
-        developer {
-            id "lsjwzh"
-            name "lsjwzh"
-            email "lsjwzh@gmail.com"
+        developer { //填写的一些基本信息
+            id properties.getProperty("developer.name")
+            name properties.getProperty("developer.name")
+            email properties.getProperty("developer.email")
         }
     }
 
     scm {
-        url "https://github.com/lsjwzh/FastTextView"
+        url siteUrl
     }
 }
 
@@ -168,7 +168,7 @@ publishing {
             artifact javadocJar
             artifact("$buildDir/outputs/aar/$project.name-release.aar")
             groupId 'com.lsjwzh.widget'
-            artifactId 'FastTextView'
+            artifactId properties.getProperty('project.name')
             version libVersion
             pom.withXml {
                 def root = asNode()
@@ -188,14 +188,14 @@ bintray {
 
     pkg {
         repo = 'maven'
-        name = 'fasttextview'
+        name = properties.getProperty('maven.name')
         licenses = ['Apache-2.0']
-        vcsUrl = 'https://github.com/lsjwzh/FastTextView.git'
+        vcsUrl = gitUrl
         publish = true
         publicDownloadNumbers = true
         version {
             name = libVersion
-            desc = 'FastTextView'
+            desc = properties.getProperty('project.name')
             released = new Date()
             version libVersion
         }
