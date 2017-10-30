@@ -77,6 +77,16 @@ java code
     fastTextView.setText(spannableStringBuilder);
 ```
 
+# TODO List
+1.Layout Cache (For List Scene)
+
+2.ColorState background
+
+3.ReadMore
+
+4.Ellipsis
+
+5.AutoSize
 
 # License
 ```
