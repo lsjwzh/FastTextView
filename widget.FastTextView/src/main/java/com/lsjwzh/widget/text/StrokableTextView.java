@@ -36,9 +36,11 @@ public class StrokableTextView extends FastTextView {
     CharSequence text = getText();
     if (text instanceof Spanned) {
       StrokeSpan[] strokeSpans = StrokeSpanUtil.getStrokeSpans((Spanned) text);
-      StrokeSpanUtil.startStroke(strokeSpans);
-      super.onDraw(canvas);
-      StrokeSpanUtil.endStroke(strokeSpans);
+      if (strokeSpans != null && strokeSpans.length > 0) {
+        StrokeSpanUtil.startStroke(strokeSpans);
+        super.onDraw(canvas);
+        StrokeSpanUtil.endStroke(strokeSpans);
+      }
     }
     super.onDraw(canvas);
     long end = System.currentTimeMillis();
