@@ -89,17 +89,11 @@ public class MainActivityFragment extends Fragment {
 
     // (int) (Math.ceil(withWithDesiredWidth) + 0.5f * textSize);//
     int width = (int) Math.ceil(Math.max(Math.max(withWithTextBounds, withWithMeasureText), withWithDesiredWidth));
-    StaticLayout layout = new StaticLayout(spannableStringBuilder, textPaint, width, Layout.Alignment.ALIGN_NORMAL,
+    StaticLayout layout = new StaticLayout(spannableStringBuilder, textPaint,
+        Math.min(width, getResources().getDisplayMetrics().widthPixels), Layout.Alignment.ALIGN_NORMAL,
         1.0f, 0.0f, true);
     fastTextLayoutView.setTextLayout(layout);
-//    TextView tv = (TextView) mRootView.findViewById(R.id.system_tv);
-//    spannableStringBuilder = new SpannableStringBuilder(spannableStringBuilder);
-//    spannableStringBuilder.removeSpan(italicSpan);
-//    spannableStringBuilder.setSpan(new StyleSpan(Typeface.ITALIC), 0, spannableStringBuilder.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-//    tv.setText(spannableStringBuilder);
-//    tv.setMovementMethod(LinkMovementMethod.getInstance());
-//    ((EditText) mRootView.findViewById(R.id.edit)).setText(spannableStringBuilder);
-    String testStr = "1234567890";
+
     TextPaint paint = new TextPaint();
     paint.setStrokeCap(Paint.Cap.ROUND);
     paint.setStrokeWidth(2);
@@ -126,9 +120,7 @@ public class MainActivityFragment extends Fragment {
 
   @NonNull
   private SpannableStringBuilder getSpannable() {
-//    SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder("xWz0 position hello world-xW");
-
-    SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder("xWz0 position hello world-xW 大厦艾弗森的v水电费萨芬的释放的发生的发的的算法大是大非的的说法的防守打法的瑟瑟发抖防守打法的算法等发达的法定范德萨范德萨的书法大师的法定水电费萨达的是 ");
+    SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(getResources().getString(R.string.cheese_ipsum));
     spannableStringBuilder.setSpan(new ClickableSpan() {
       @Override
       public void onClick(View widget) {
