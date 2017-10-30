@@ -29,3 +29,68 @@ D/TestTextView: TestTextView onDraw cost:249
 You can see FastTextView's 'onMeasure' almost no time consuming.
 
 ## Basic Usage
+```
+repositories {
+    ...
+    jcenter()
+    ...
+}
+
+dependencies {
+    ...
+    compile 'com.lsjwzh.widget:FastTextView:0.9.8'
+    ...
+}
+```
+java code
+```
+    FastTextView fastTextView = (FastTextView) mRootView.findViewById(R.id.fast_tv2);
+    fastTextView.setText(spannableString);
+```
+
+## Advance Usage
+### Use Layout directly
+java code
+```
+    TextPaint textPaint = new TextPaint();
+    textPaint.setAntiAlias(true);
+    textPaint.setColor(Color.WHITE);
+    float textSize = TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_SP, 20, getResources().getDisplayMetrics());
+    textPaint.setTextSize(textSize);
+    FastTextLayoutView fastTextLayoutView = (FastTextLayoutView) mRootView.findViewById(R.id.fast_tv);
+    int width = Layout.getDesiredWidth(spannableStringBuilder, textPaint);
+
+    StaticLayout layout = new StaticLayout(spannableStringBuilder, textPaint,
+            Math.min(width, getResources().getDisplayMetrics().widthPixels), Layout.Alignment.ALIGN_NORMAL,
+            1.0f, 0.0f, true);
+    fastTextLayoutView.setTextLayout(layout);
+```
+
+### Single Line Stroke Text
+java code
+```
+    ... ...
+    StrokeSpan strokeSpan = new StrokeSpan(Color.BLUE, Color.YELLOW, 20);
+    spannableStringBuilder.setSpan(strokeSpan, 0, spannableStringBuilder.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+    FastTextView fastTextView = (FastTextView) mRootView.findViewById(R.id.fast_tv2);
+    fastTextView.setText(spannableStringBuilder);
+```
+
+
+# License
+```
+Copyright 2017 lsjwzh
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+```
