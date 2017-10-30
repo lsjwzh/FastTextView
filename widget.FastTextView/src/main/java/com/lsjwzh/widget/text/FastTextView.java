@@ -1,6 +1,5 @@
 package com.lsjwzh.widget.text;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
@@ -93,23 +92,13 @@ public class FastTextView extends FastTextLayoutView {
   }
 
   @Override
-  protected void onDraw(Canvas canvas) {
-    long start = System.currentTimeMillis();
-    super.onDraw(canvas);
-    long end = System.currentTimeMillis();
-    if (BuildConfig.DEBUG) {
-      Log.d(TAG, "onDraw cost:" + (end - start));
-    }
-  }
-
-  @Override
   protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
     long start = System.currentTimeMillis();
     int width = MeasureSpec.getSize(widthMeasureSpec);
     if (mMaxWidth != Integer.MAX_VALUE && width > mMaxWidth) {
       widthMeasureSpec = MeasureSpec.makeMeasureSpec(mMaxWidth, MeasureSpec.EXACTLY);
     }
-    if (mLayout == null && width > 0) {
+    if ((mLayout == null && width > 0) || (mLayout != null && width != mLayout.getWidth())) {
       mLayout = makeLayout(mText, width);
     }
     super.onMeasure(widthMeasureSpec, heightMeasureSpec);
