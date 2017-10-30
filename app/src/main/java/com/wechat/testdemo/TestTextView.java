@@ -13,6 +13,8 @@ import android.widget.TextView;
  */
 
 public class TestTextView extends TextView {
+  private static final String TAG = TestTextView.class.getSimpleName();
+
   public TestTextView(Context context) {
     super(context);
   }
@@ -32,7 +34,7 @@ public class TestTextView extends TextView {
       super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
     long end = SystemClock.elapsedRealtime();
-    Log.d("test", "TestTextView measure cost:" + (end - start));
+    Log.d(TAG, TAG + " measure cost:" + (end - start));
 
   }
 
@@ -43,6 +45,6 @@ public class TestTextView extends TextView {
       super.onDraw(canvas);
     }
     long end = SystemClock.elapsedRealtime();
-    Log.d("test", "TestTextView onDraw cost:" + (end - start));
+    Log.d(TAG, TAG + " onDraw cost:" + (end - start));
   }
 }

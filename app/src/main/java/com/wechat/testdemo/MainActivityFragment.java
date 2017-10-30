@@ -13,6 +13,7 @@ import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.StaticLayout;
 import android.text.TextPaint;
+import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.text.style.ImageSpan;
 import android.util.Log;
@@ -20,6 +21,7 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.lsjwzh.widget.text.FastTextLayoutView;
@@ -115,28 +117,12 @@ public class MainActivityFragment extends Fragment {
 
     FastTextView fastTextView = (FastTextView) mRootView.findViewById(R.id.fast_tv2);
     fastTextView.setText(spannableStringBuilder);
+
+    TextView tv = (TextView) mRootView.findViewById(R.id.system_tv);
+    tv.setText(spannableStringBuilder);
+    tv.setMovementMethod(LinkMovementMethod.getInstance());
     return mRootView;
   }
-  //返回textview的显示区域的layout，该textview的layout并不会显示出来，只是用其宽度来比较要显示的文字是否过长
-//  private Layout createWorkingLayout(String workingText) {
-//    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-//      return StaticLayout.Builder.obtain(workingText, 0, workingText.length(), getPaint(), initWidth - getPaddingLeft() - getPaddingRight())
-//          .setLineSpacing(getLineSpacingExtra(), getLineSpacingMultiplier())
-//          .setAlignment(Layout.Alignment.ALIGN_NORMAL)
-//          // 注意，在textview里需要设置这两个参数，否则显示会不正常
-//          .setBreakStrategy(Layout.BREAK_STRATEGY_HIGH_QUALITY)
-//          .setHyphenationFrequency(Layout.HYPHENATION_FREQUENCY_FULL)
-//          .build();
-//    } else{
-//      return StaticLayout.Builder.obtain(workingText, 0, workingText.length(), getPaint(), initWidth - getPaddingLeft() - getPaddingRight())
-//          .setLineSpacing(lineSpaceExtra, 1.0f)
-//          .setAlignment(Layout.Alignment.ALIGN_NORMAL)
-//          // 注意，在textview里需要设置这两个参数，否则显示会不正常
-//          .setBreakStrategy(Layout.BREAK_STRATEGY_HIGH_QUALITY)
-//          .setHyphenationFrequency(Layout.HYPHENATION_FREQUENCY_FULL)
-//          .build();
-//    }
-//  }
 
   @NonNull
   private SpannableStringBuilder getSpannable() {
@@ -161,8 +147,8 @@ public class MainActivityFragment extends Fragment {
     spannableStringBuilder.setSpan(new ImageSpan(drawable)
         , 1, 2, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
 //    ItalicReplacementSpan italicSpan = new ItalicReplacementSpan(-0.25f);
-    StrokeSpan strokeSpan = new StrokeSpan(Color.BLUE, Color.YELLOW, 20);
-    spannableStringBuilder.setSpan(strokeSpan, 0, spannableStringBuilder.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+//    StrokeSpan strokeSpan = new StrokeSpan(Color.BLUE, Color.YELLOW, 20);
+//    spannableStringBuilder.setSpan(strokeSpan, 0, spannableStringBuilder.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
     return spannableStringBuilder;
   }
 }

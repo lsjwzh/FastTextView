@@ -11,7 +11,7 @@ import android.util.Log;
 /**
  * Simple and Fast TextView.
  */
-public class FastTextView extends com.lsjwzh.widget.text.StrokableTextView {
+public class FastTextView extends com.lsjwzh.widget.text.FastTextView {
   private static final String TAG = FastTextView.class.getSimpleName();
   private boolean mIsDebug = true;
 
@@ -35,20 +35,24 @@ public class FastTextView extends com.lsjwzh.widget.text.StrokableTextView {
   @Override
   protected void onDraw(Canvas canvas) {
     long start = System.currentTimeMillis();
-    super.onDraw(canvas);
+    for (int i = 0; i < 1000; i++) {
+      super.onDraw(canvas);
+    }
     long end = System.currentTimeMillis();
     if (mIsDebug) {
-      Log.d(TAG, "onDraw cost:" + (end - start));
+      Log.d(TAG, TAG + " onDraw cost:" + (end - start));
     }
   }
 
   @Override
   protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
     long start = System.currentTimeMillis();
-    super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+    for (int i = 0; i < 1000; i++) {
+      super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+    }
     long end = System.currentTimeMillis();
     if (mIsDebug) {
-      Log.d(TAG, "onMeasure cost:" + (end - start));
+      Log.d(TAG, TAG + " onMeasure cost:" + (end - start));
     }
   }
 }

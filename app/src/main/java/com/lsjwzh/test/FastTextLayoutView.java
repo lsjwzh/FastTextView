@@ -41,7 +41,7 @@ public class FastTextLayoutView extends com.lsjwzh.widget.text.ClickableSpanLayo
     }
     long end = System.currentTimeMillis();
     if (mIsDebug) {
-      Log.d(TAG, "onDraw cost:" + (end - start));
+      Log.d(TAG, TAG + " onDraw cost:" + (end - start));
     }
   }
 
@@ -54,7 +54,7 @@ public class FastTextLayoutView extends com.lsjwzh.widget.text.ClickableSpanLayo
     }
     long end = System.currentTimeMillis();
     if (mIsDebug) {
-      Log.d(TAG, "onMeasure cost:" + (end - start));
+      Log.d(TAG, TAG + " onMeasure cost:" + (end - start));
     }
   }
 }
