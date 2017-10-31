@@ -50,8 +50,8 @@ public class EllipsisSpannedContainer implements Spanned {
   public <T> T[] getSpans(int start, int end, Class<T> type) {
     if (mEllipsisStart >= 0 && mEllipsisStart < end) {
       T[] spans1 = mSourceSpanned.getSpans(start, Math.max(mEllipsisStart, start), type);
-      T[] spans2 = mSourceSpanned.getSpans(Math.max(mEllipsisStart, start), Math.min(end, mEllipsisEnd), type);
-      if (spans1 != null) {
+      T[] spans2 = mSourceSpanned.getSpans(Math.min(end, mEllipsisEnd), end, type);
+      if (spans1 != null && spans1.length > 0) {
         T[] spans = ArrayUtils.newUnpaddedArray(type, spans1.length + spans2.length);
         System.arraycopy(spans1, 0, spans, 0, spans1.length);
         System.arraycopy(spans2, 0, spans, spans1.length, spans2.length);
