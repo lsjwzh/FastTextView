@@ -147,6 +147,21 @@ public class MainActivityFragment extends Fragment {
     drawable.setBounds(0, 0, 35, 35);
     spannableStringBuilder.setSpan(new ImageSpan(drawable)
         , 1, 2, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+
+    spannableStringBuilder.setSpan(new ImageSpan(drawable)
+        , 35, 36, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+
+    spannableStringBuilder.setSpan(new ImageSpan(drawable)
+        , 36, 37, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+
+    spannableStringBuilder.setSpan(new ImageSpan(drawable)
+        , 37, 38, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+
+    spannableStringBuilder.setSpan(new ImageSpan(drawable)
+        , 38, 39, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+
+    spannableStringBuilder.setSpan(new ImageSpan(drawable)
+        , 39, 40, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
 //    ItalicReplacementSpan italicSpan = new ItalicReplacementSpan(-0.25f);
 //    StrokeSpan strokeSpan = new StrokeSpan(Color.BLUE, Color.YELLOW, 20);
 //    spannableStringBuilder.setSpan(strokeSpan, 0, spannableStringBuilder.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);

@@ -27,6 +27,8 @@
       android:background="#6600ffff"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
+      android:ellipsize="start"
+      android:maxLines="1"
       android:textSize="20sp"
       android:clickable="true"/>
 
@@ -37,6 +39,8 @@
       android:layout_height="wrap_content"
       android:layout_marginTop="20dp"
       android:textColor="#ffffff"
+      android:ellipsize="start"
+      android:maxLines="1"
       android:textSize="20sp"/>
 
   </LinearLayout>

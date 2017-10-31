@@ -9,6 +9,7 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
+import android.text.EllipsisSpannedContainer;
 import android.text.Layout;
 import android.text.Spannable;
 import android.text.Spanned;
@@ -186,7 +187,25 @@ public class FastTextView extends FastTextLayoutView {
         .setMaxLines(mMaxLines)
         .setAlignment(Layout.Alignment.ALIGN_NORMAL)
         .setIncludePad(true);
-    layoutBuilder.setEllipsize(getTruncateAt());
+    TextUtils.TruncateAt truncateAt = getTruncateAt();
+    layoutBuilder.setEllipsize(truncateAt);
+    if (truncateAt != null && text instanceof Spanned) {
+      EllipsisSpannedContainer ellipsisSpanned = new EllipsisSpannedContainer((Spanned) text);
+      layoutBuilder.setText(ellipsisSpanned);
+      StaticLayout staticLayout = layoutBuilder.build();
+      int lineCount = staticLayout.getLineCount();
+      if (lineCount > 0) {
+        if (truncateAt == TextUtils.TruncateAt.END) {
+          int ellipsisCount = staticLayout.getEllipsisCount(lineCount - 1);
+          ellipsisSpanned.setEllipsisSpan(ellipsisCount, ellipsisCount + 1);
+        } else {
+          int ellipsisStart = staticLayout.getEllipsisStart(lineCount - 1);
+          ellipsisSpanned.setEllipsisSpan(ellipsisStart, ellipsisStart + 1);
+
+        }
+      }
+      return staticLayout;
+    }
     return layoutBuilder.build();
   }
 
