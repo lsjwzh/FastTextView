@@ -14,6 +14,12 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
+    <TextView
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:textColor="#ffffff"
+      android:text="FastTextLayoutView:"/>
+
     <com.lsjwzh.test.FastTextLayoutView
       android:id="@+id/fast_tv"
       android:background="#6600ffff"
@@ -21,16 +27,30 @@
       android:layout_height="wrap_content"
       android:clickable="true"/>
 
+
+    <TextView
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:textColor="#ffffff"
+      android:text="FastTextView:"/>
+
     <com.lsjwzh.test.FastTextView
       android:id="@+id/fast_tv2"
       android:layout_marginTop="20dp"
       android:background="#6600ffff"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:ellipsize="start"
-      android:maxLines="1"
+      android:ellipsize="end"
+      android:maxLines="2"
       android:textSize="20sp"
       android:clickable="true"/>
+
+
+    <TextView
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:textColor="#ffffff"
+      android:text="Android TextView:"/>
 
     <com.wechat.testdemo.TestTextView
       android:id="@+id/system_tv"
@@ -39,8 +59,8 @@
       android:layout_height="wrap_content"
       android:layout_marginTop="20dp"
       android:textColor="#ffffff"
-      android:ellipsize="start"
-      android:maxLines="1"
+      android:ellipsize="end"
+      android:maxLines="2"
       android:textSize="20sp"/>
 
   </LinearLayout>

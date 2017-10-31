@@ -13,6 +13,9 @@ so it support most features of Android TextView.
 3.Support Stroke Text
 (More accurate method to measure stroke text and italic text)
 
+4.Correct Ellipsis handle with ImageSpan
+
+![](ellipsis.png)
 
 ## FastTextView vs Android TextView
 Rendering a SpannableString of 389 chars with ClickableSpan and ImageSpan.
@@ -38,7 +41,7 @@ repositories {
 
 dependencies {
     ...
-    compile 'com.lsjwzh.widget:FastTextView:0.9.8'
+    compile 'com.lsjwzh.widget:FastTextView:1.0.1'
     ...
 }
 ```
@@ -84,7 +87,7 @@ java code
 
 3.ReadMore
 
-4.Ellipsis
+<del>4.Ellipsis</del>
 
 5.AutoSize
 
