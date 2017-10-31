@@ -1,5 +1,7 @@
 package android.text;
 
+import android.text.style.ReplacementSpan;
+
 import com.android.internal.util.ArrayUtils;
 
 /**
@@ -9,14 +11,19 @@ public class EllipsisSpannedContainer implements Spanned {
   private final Spanned mSourceSpanned;
   private int mEllipsisStart = -1;
   private int mEllipsisEnd = -1;
+  private ReplacementSpan mCustomEllipsisSpan;
 
   public EllipsisSpannedContainer(Spanned spanned) {
     mSourceSpanned = spanned;
   }
 
-  public void setEllipsisSpan(int ellipsisStart, int ellipsisEnd) {
+  public void setEllipsisRange(int ellipsisStart, int ellipsisEnd) {
     mEllipsisStart = ellipsisStart;
     mEllipsisEnd = ellipsisEnd;
+  }
+
+  public void setCustomEllipsisSpan(ReplacementSpan customEllipsisSpan) {
+    mCustomEllipsisSpan = customEllipsisSpan;
   }
 
   public int getEllipsisStart() {
@@ -33,16 +40,25 @@ public class EllipsisSpannedContainer implements Spanned {
 
   @Override
   public int getSpanEnd(Object tag) {
+    if (mCustomEllipsisSpan != null && mCustomEllipsisSpan == tag) {
+      return mEllipsisEnd;
+    }
     return mSourceSpanned.getSpanEnd(tag);
   }
 
   @Override
   public int getSpanFlags(Object tag) {
+    if (mCustomEllipsisSpan != null && mCustomEllipsisSpan == tag) {
+      return Spanned.SPAN_INCLUSIVE_EXCLUSIVE;
+    }
     return mSourceSpanned.getSpanFlags(tag);
   }
 
   @Override
   public int getSpanStart(Object tag) {
+    if (mCustomEllipsisSpan != null && mCustomEllipsisSpan == tag) {
+      return mEllipsisStart;
+    }
     return mSourceSpanned.getSpanStart(tag);
   }
 
@@ -51,12 +67,15 @@ public class EllipsisSpannedContainer implements Spanned {
     if (mEllipsisStart >= 0 && mEllipsisStart < end) {
       T[] spans1 = mSourceSpanned.getSpans(start, Math.max(mEllipsisStart, start), type);
       T[] spans2 = mSourceSpanned.getSpans(Math.min(end, mEllipsisEnd), end, type);
-      if (spans1 != null && spans1.length > 0) {
-        T[] spans = ArrayUtils.newUnpaddedArray(type, spans1.length + spans2.length);
-        System.arraycopy(spans1, 0, spans, 0, spans1.length);
-        System.arraycopy(spans2, 0, spans, spans1.length, spans2.length);
+      int offset = mCustomEllipsisSpan == null ? 0 : 1;
+      T[] spans = ArrayUtils.newUnpaddedArray(type,
+          spans1.length + spans2.length + offset);
+      System.arraycopy(spans1, 0, spans, 0, spans1.length);
+      if (offset > 0 && type.isAssignableFrom(ReplacementSpan.class)) {
+        spans[0] =  (T) mCustomEllipsisSpan;
       }
-      return spans2;
+      System.arraycopy(spans2, 0, spans, spans1.length + offset, spans2.length);
+      return spans;
     }
     return mSourceSpanned.getSpans(start, end, type);
   }

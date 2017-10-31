@@ -119,6 +119,10 @@ public class MainActivityFragment extends Fragment {
     Log.d("test", "fill measureText:" + measureTextWidth);
 
     FastTextView fastTextView = (FastTextView) mRootView.findViewById(R.id.fast_tv2);
+
+    Drawable drawable = getResources().getDrawable(R.mipmap.ic_launcher);
+    drawable.setBounds(0, 0, 70, 35);
+//    fastTextView.setCustomEllipsisSpan(new ImageSpan(drawable));
     fastTextView.setText(spannableStringBuilder);
 
     TextView tv = (TextView) mRootView.findViewById(R.id.system_tv);

@@ -17,6 +17,7 @@ import android.text.StaticLayout;
 import android.text.StaticLayoutBuilderCompat;
 import android.text.TextPaint;
 import android.text.TextUtils;
+import android.text.style.ReplacementSpan;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.TypedValue;
@@ -34,6 +35,7 @@ public class FastTextView extends FastTextLayoutView {
   private int mMaxWidth = Integer.MAX_VALUE;
   private int mMaxLines;
   private int mEllipsize = -1;
+  private ReplacementSpan mCustomEllipsisSpan;
 
   public FastTextView(Context context) {
     this(context, null);
@@ -93,7 +95,11 @@ public class FastTextView extends FastTextLayoutView {
     if (textLayout != null) {
       CharSequence textSource = textLayout.getText();
       if (textSource instanceof Spannable) {
-        if (ClickableSpanUtil.handleClickableSpan(this, textLayout, (Spannable) textSource, event)) {
+        if (ClickableSpanUtil.handleClickableSpan(this, textLayout, (Spannable) textSource, event)
+            || (mCustomEllipsisSpan != null
+            && mCustomEllipsisSpan instanceof ClickableSpanUtil.Clickable &&
+            ClickableSpanUtil.handleClickableSpan(this, textLayout, (Spannable) textSource,
+                ((ClickableSpanUtil.Clickable) mCustomEllipsisSpan).getClass(), event))) {
           return true;
         }
       }
@@ -173,6 +179,14 @@ public class FastTextView extends FastTextLayoutView {
     mTextPaint.setTextSize(rawTextSize);
   }
 
+  public void setCustomEllipsisSpan(ReplacementSpan customEllipsisSpan) {
+    mCustomEllipsisSpan = customEllipsisSpan;
+  }
+
+  public ReplacementSpan getCustomEllipsisSpan() {
+    return mCustomEllipsisSpan;
+  }
+
   @NonNull
   private StaticLayout makeLayout(CharSequence text, int maxWidth) {
     int width;
@@ -191,17 +205,17 @@ public class FastTextView extends FastTextLayoutView {
     layoutBuilder.setEllipsize(truncateAt);
     if (truncateAt != null && text instanceof Spanned) {
       EllipsisSpannedContainer ellipsisSpanned = new EllipsisSpannedContainer((Spanned) text);
+      ellipsisSpanned.setCustomEllipsisSpan(mCustomEllipsisSpan);
       layoutBuilder.setText(ellipsisSpanned);
       StaticLayout staticLayout = layoutBuilder.build();
       int lineCount = staticLayout.getLineCount();
       if (lineCount > 0) {
         if (truncateAt == TextUtils.TruncateAt.END) {
           int ellipsisCount = staticLayout.getEllipsisCount(lineCount - 1);
-          ellipsisSpanned.setEllipsisSpan(ellipsisCount, ellipsisCount + 1);
+          ellipsisSpanned.setEllipsisRange(ellipsisCount, ellipsisCount + 1);
         } else {
           int ellipsisStart = staticLayout.getEllipsisStart(lineCount - 1);
-          ellipsisSpanned.setEllipsisSpan(ellipsisStart, ellipsisStart + 1);
-
+          ellipsisSpanned.setEllipsisRange(ellipsisStart, ellipsisStart + 1);
         }
       }
       return staticLayout;
