@@ -3,7 +3,6 @@ package com.lsjwzh.widget.text;
 import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
-import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Build;
@@ -14,7 +13,9 @@ import android.text.Layout;
 import android.text.Spannable;
 import android.text.Spanned;
 import android.text.StaticLayout;
+import android.text.StaticLayoutBuilderCompat;
 import android.text.TextPaint;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.TypedValue;
@@ -30,6 +31,8 @@ public class FastTextView extends FastTextLayoutView {
   private int mSpacingAdd;
   private float mSpacingMultiplier = 1f;
   private int mMaxWidth = Integer.MAX_VALUE;
+  private int mMaxLines;
+  private int mEllipsize = -1;
 
   public FastTextView(Context context) {
     this(context, null);
@@ -59,6 +62,12 @@ public class FastTextView extends FastTextLayoutView {
     for (int i = 0; i < n; i++) {
       int attr = a.getIndex(i);
       switch (attr) {
+        case com.android.internal.R.styleable.TextView_ellipsize:
+          mEllipsize = a.getInt(attr, mEllipsize);
+          break;
+        case com.android.internal.R.styleable.TextView_maxLines:
+          mMaxLines = a.getInt(attr, Integer.MAX_VALUE);
+          break;
         case com.android.internal.R.styleable.TextView_textColor:
           // Do not support ColorState
           textPaint.setColor(a.getColor(attr, Color.BLACK));
@@ -135,6 +144,21 @@ public class FastTextView extends FastTextLayoutView {
     }
   }
 
+  public int getMaxWidth() {
+    return mMaxWidth;
+  }
+
+  public void setMaxLines(int maxLines) {
+    if (mMaxLines != maxLines) {
+      mMaxLines = maxLines;
+      setTextLayout(null);
+    }
+  }
+
+  public int getMaxLines() {
+    return mMaxLines;
+  }
+
   /**
    * Set the default text size to a given unit and value.  See {@link
    * TypedValue} for the possible dimension units.
@@ -156,8 +180,27 @@ public class FastTextView extends FastTextLayoutView {
     } else {
       width = (int) Math.ceil(mTextPaint.measureText(text, 0, text.length()));
     }
-    return new StaticLayout(text, mTextPaint,
-        maxWidth > 0 ? Math.min(maxWidth, width) : width,
-        Layout.Alignment.ALIGN_NORMAL, mSpacingMultiplier, mSpacingAdd, true);
+
+    StaticLayoutBuilderCompat layoutBuilder = StaticLayoutBuilderCompat.obtain(text, 0, text.length(), mTextPaint, maxWidth > 0 ? Math.min(maxWidth, width) : width);
+    layoutBuilder.setLineSpacing(mSpacingAdd, mSpacingMultiplier)
+        .setMaxLines(mMaxLines)
+        .setAlignment(Layout.Alignment.ALIGN_NORMAL)
+        .setIncludePad(true);
+    layoutBuilder.setEllipsize(getTruncateAt());
+    return layoutBuilder.build();
+  }
+
+  private TextUtils.TruncateAt getTruncateAt() {
+    switch (mEllipsize) {
+      // do not support marque
+      case 1:
+        return TextUtils.TruncateAt.START;
+      case 2:
+        return TextUtils.TruncateAt.MIDDLE;
+      case 3:
+        return TextUtils.TruncateAt.END;
+      default:
+        return null;
+    }
   }
 }

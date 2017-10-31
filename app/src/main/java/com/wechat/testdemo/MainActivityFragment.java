@@ -12,7 +12,9 @@ import android.text.Layout;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.StaticLayout;
+import android.text.StaticLayoutBuilderCompat;
 import android.text.TextPaint;
+import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.text.style.ImageSpan;
@@ -89,9 +91,16 @@ public class MainActivityFragment extends Fragment {
 
     // (int) (Math.ceil(withWithDesiredWidth) + 0.5f * textSize);//
     int width = (int) Math.ceil(Math.max(Math.max(withWithTextBounds, withWithMeasureText), withWithDesiredWidth));
-    StaticLayout layout = new StaticLayout(spannableStringBuilder, textPaint,
-        Math.min(width, getResources().getDisplayMetrics().widthPixels), Layout.Alignment.ALIGN_NORMAL,
-        1.0f, 0.0f, true);
+//    StaticLayout layout = new StaticLayout(spannableStringBuilder, textPaint,
+//        Math.min(width, getResources().getDisplayMetrics().widthPixels), Layout.Alignment.ALIGN_NORMAL,
+//        1.0f, 0.0f, true);
+    StaticLayout layout = StaticLayoutBuilderCompat.obtain(spannableStringBuilder, 0, spannableStringBuilder.length(),
+        textPaint, Math.min(width, getResources().getDisplayMetrics().widthPixels))
+        .setAlignment(Layout.Alignment.ALIGN_NORMAL)
+        .setLineSpacing(0f, 1f)
+        .setEllipsize(TextUtils.TruncateAt.END)
+        .setMaxLines(2).setIncludePad(true).build();
+
     fastTextLayoutView.setTextLayout(layout);
 
     TextPaint paint = new TextPaint();
@@ -120,7 +129,7 @@ public class MainActivityFragment extends Fragment {
 
   @NonNull
   private SpannableStringBuilder getSpannable() {
-    SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(getResources().getString(R.string.cheese_ipsum));
+    SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(getResources().getString(R.string.content_cn));
     spannableStringBuilder.setSpan(new ClickableSpan() {
       @Override
       public void onClick(View widget) {
