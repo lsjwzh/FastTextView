@@ -2,7 +2,7 @@ package android.text;
 
 import android.annotation.Nullable;
 import android.os.Build;
-import android.util.Pools;
+import android.support.v4.util.Pools;
 
 /**
  * Builder for static layouts. The builder is a newer pattern for constructing
