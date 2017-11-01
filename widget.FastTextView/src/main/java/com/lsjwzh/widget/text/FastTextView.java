@@ -33,7 +33,7 @@ public class FastTextView extends FastTextLayoutView {
   private int mSpacingAdd;
   private float mSpacingMultiplier = 1f;
   private int mMaxWidth = Integer.MAX_VALUE;
-  private int mMaxLines;
+  private int mMaxLines = Integer.MAX_VALUE;
   private int mEllipsize = -1;
   private ReplacementSpan mCustomEllipsisSpan;
 
