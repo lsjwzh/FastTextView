@@ -41,9 +41,10 @@ public class StaticLayoutBuilderCompat {
     b.mPaint = paint;
     b.mWidth = width;
     b.mAlignment = Layout.Alignment.ALIGN_NORMAL;
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-      b.mTextDir = TextDirectionHeuristics.FIRSTSTRONG_LTR;
-    }
+    // it has exist in 4.0.1
+    // see http://www.grepcode.com/file/repository.grepcode.com/java/ext/com.google.android/android/4.0.1_r1/android/text/TextDirectionHeuristics.java#TextDirectionHeuristics.FirstStrong.0INSTANCE
+    b.mTextDir = TextDirectionHeuristics.FIRSTSTRONG_LTR;
+
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
       b.mBreakStrategy = Layout.BREAK_STRATEGY_SIMPLE;
       b.mHyphenationFrequency = Layout.HYPHENATION_FREQUENCY_NONE;
