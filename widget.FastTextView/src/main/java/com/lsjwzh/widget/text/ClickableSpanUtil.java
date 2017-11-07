@@ -3,6 +3,7 @@ package com.lsjwzh.widget.text;
 import android.text.Layout;
 import android.text.Selection;
 import android.text.Spannable;
+import android.text.Spanned;
 import android.text.style.ClickableSpan;
 import android.view.MotionEvent;
 import android.view.View;
@@ -15,7 +16,7 @@ public class ClickableSpanUtil {
     void onClick(View widget);
   }
 
-  public static boolean handleClickableSpan(View view, Layout layout, Spannable buffer, Class<? extends Clickable> spanType, MotionEvent event) {
+  public static boolean handleClickableSpan(View view, Layout layout, Spanned buffer, Class<? extends Clickable> spanType, MotionEvent event) {
     int action = event.getAction();
 
     if (action == MotionEvent.ACTION_UP ||
@@ -37,14 +38,14 @@ public class ClickableSpanUtil {
       if (link.length != 0) {
         if (action == MotionEvent.ACTION_UP) {
           link[0].onClick(view);
-        } else {
-          Selection.setSelection(buffer,
+        } else if (buffer instanceof Spannable) {
+          Selection.setSelection((Spannable) buffer,
               buffer.getSpanStart(link[0]),
               buffer.getSpanEnd(link[0]));
         }
         return true;
-      } else {
-        Selection.removeSelection(buffer);
+      } else if (buffer instanceof Spannable) {
+        Selection.removeSelection((Spannable) buffer);
       }
     }
 

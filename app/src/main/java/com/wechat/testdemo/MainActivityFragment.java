@@ -30,6 +30,7 @@ import com.lsjwzh.test.TestSingleLineTextView;
 import com.lsjwzh.test.TextLineView;
 import com.lsjwzh.widget.text.FastTextLayoutView;
 import com.lsjwzh.widget.text.FastTextView;
+import com.lsjwzh.widget.text.ReadMoreTextView;
 import com.lsjwzh.widget.text.StrokeSpan;
 import com.lsjwzh.widget.text.TextMeasureUtil;
 
@@ -124,7 +125,7 @@ public class MainActivityFragment extends Fragment {
 
     Drawable drawable = getResources().getDrawable(R.mipmap.ic_launcher);
     drawable.setBounds(0, 0, 70, 35);
-//    fastTextView.setCustomEllipsisSpan(new ImageSpan(drawable));
+    fastTextView.setCustomEllipsisSpan(new ImageSpan(drawable));
     fastTextView.setText(spannableStringBuilder);
 
     TextView tv = (TextView) mRootView.findViewById(R.id.system_tv);
@@ -136,6 +137,10 @@ public class MainActivityFragment extends Fragment {
 
     TextLineView textLineView = (TextLineView) mRootView.findViewById(R.id.text_line_tv);
     textLineView.setText(spannableStringBuilder);
+
+
+    ReadMoreTextView readMoreTextView = (ReadMoreTextView) mRootView.findViewById(R.id.readmore_tv);
+    readMoreTextView.setText(spannableStringBuilder);
     return mRootView;
   }
 

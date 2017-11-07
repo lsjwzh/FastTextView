@@ -5,5 +5,5 @@ package com.lsjwzh.test;
  */
 
 public class Const {
-  public final static int LOOP_COUNT = 1000;
+  public final static int LOOP_COUNT = 1;
 }

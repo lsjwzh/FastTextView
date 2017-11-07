@@ -3,6 +3,9 @@ package android.text;
 import android.text.style.ReplacementSpan;
 
 import com.android.internal.util.ArrayUtils;
+import com.lsjwzh.widget.text.ReadMoreTextView;
+
+import java.util.Arrays;
 
 /**
  * Fix Spanned Ellipsis bug.
@@ -64,15 +67,20 @@ public class EllipsisSpannedContainer implements Spanned {
 
   @Override
   public <T> T[] getSpans(int start, int end, Class<T> type) {
-    if (mEllipsisStart >= 0 && mEllipsisStart < end) {
+    if (mEllipsisStart >= start && mEllipsisStart <= end) {
       T[] spans1 = mSourceSpanned.getSpans(start, Math.max(mEllipsisStart, start), type);
       T[] spans2 = mSourceSpanned.getSpans(Math.min(end, mEllipsisEnd), end, type);
-      int offset = mCustomEllipsisSpan == null ? 0 : 1;
-      T[] spans = ArrayUtils.newUnpaddedArray(type,
-          spans1.length + spans2.length + offset);
+      int offset = mCustomEllipsisSpan != null
+          && (type.isAssignableFrom(ReplacementSpan.class) || type == mCustomEllipsisSpan.getClass()) ?
+          1 : 0;
+      int minLen = spans1.length + spans2.length + offset;
+      T[] spans = ArrayUtils.newUnpaddedArray(type, minLen);
+      if (spans.length > minLen) {
+        spans = Arrays.copyOf(spans, minLen);
+      }
       System.arraycopy(spans1, 0, spans, 0, spans1.length);
-      if (offset > 0 && type.isAssignableFrom(ReplacementSpan.class)) {
-        spans[0] =  (T) mCustomEllipsisSpan;
+      if (offset > 0) {
+        spans[spans1.length] =  (T) mCustomEllipsisSpan;
       }
       System.arraycopy(spans2, 0, spans, spans1.length + offset, spans2.length);
       return spans;

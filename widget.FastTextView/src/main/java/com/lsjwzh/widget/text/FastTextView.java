@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.text.EllipsisSpannedContainer;
 import android.text.Layout;
+import android.text.LayoutUtils;
 import android.text.Spannable;
 import android.text.Spanned;
 import android.text.StaticLayout;
@@ -61,11 +62,22 @@ public class FastTextView extends FastTextLayoutView {
     Layout textLayout = getTextLayout();
     if (textLayout != null) {
       CharSequence textSource = textLayout.getText();
+      EllipsisSpannedContainer ellipsisSpannedContainer = null;
+      if (LayoutUtils.isEllipsizer(textSource)) {
+        textSource = LayoutUtils.extractFromEllipsizer(textSource);
+        if (textSource instanceof EllipsisSpannedContainer) {
+          ellipsisSpannedContainer = (EllipsisSpannedContainer) textSource;
+          textSource = ellipsisSpannedContainer.getSourceSpanned();
+        }
+      }
       if (textSource instanceof Spannable) {
         if (ClickableSpanUtil.handleClickableSpan(this, textLayout, (Spannable) textSource, event)
+          || ClickableSpanUtil.handleClickableSpan(this, textLayout, (Spannable) textSource,
+            ClickableSpanUtil.Clickable.class, event)
             || (mCustomEllipsisSpan != null
-            && mCustomEllipsisSpan instanceof ClickableSpanUtil.Clickable &&
-            ClickableSpanUtil.handleClickableSpan(this, textLayout, (Spannable) textSource,
+            && mCustomEllipsisSpan instanceof ClickableSpanUtil.Clickable
+            && ellipsisSpannedContainer != null
+            && ClickableSpanUtil.handleClickableSpan(this, textLayout, ellipsisSpannedContainer,
                 ((ClickableSpanUtil.Clickable) mCustomEllipsisSpan).getClass(), event))) {
           return true;
         }
@@ -200,7 +212,7 @@ public class FastTextView extends FastTextLayoutView {
   }
 
   @NonNull
-  private StaticLayout makeLayout(CharSequence text, int maxWidth) {
+  protected StaticLayout makeLayout(CharSequence text, int maxWidth) {
     int width;
     if (text instanceof Spanned) {
       width = (int) Math.ceil(Layout.getDesiredWidth(text, mTextPaint));
@@ -222,20 +234,21 @@ public class FastTextView extends FastTextLayoutView {
       StaticLayout staticLayout = layoutBuilder.build();
       int lineCount = staticLayout.getLineCount();
       if (lineCount > 0) {
-        if (truncateAt == TextUtils.TruncateAt.END) {
-          int ellipsisCount = staticLayout.getEllipsisCount(lineCount - 1);
-          ellipsisSpanned.setEllipsisRange(ellipsisCount, ellipsisCount + 1);
-        } else {
-          int ellipsisStart = staticLayout.getEllipsisStart(lineCount - 1);
-          ellipsisSpanned.setEllipsisRange(ellipsisStart, ellipsisStart + 1);
+        int beforeLastLine = 0;
+        for (int i = 0; i < lineCount - 1; i++) {
+          beforeLastLine += staticLayout.getLineVisibleEnd(i);
         }
+        int ellipsisCount = staticLayout.getEllipsisCount(lineCount - 1);
+        int ellipsisStart = staticLayout.getEllipsisStart(lineCount - 1);
+        int start = beforeLastLine + ellipsisStart;
+        ellipsisSpanned.setEllipsisRange(start, start + ellipsisCount);
       }
       return staticLayout;
     }
     return layoutBuilder.build();
   }
 
-  private TextUtils.TruncateAt getTruncateAt() {
+  protected TextUtils.TruncateAt getTruncateAt() {
     switch (mAttrsHelper.mEllipsize) {
       // do not support marque
       case 1:

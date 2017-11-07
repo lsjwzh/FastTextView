@@ -37,7 +37,6 @@ public class FastTextLayoutView extends View {
   @Override
   protected void onDraw(Canvas canvas) {
     long start = System.currentTimeMillis();
-    super.onDraw(canvas);
     canvas.save();
     if (mLayout != null) {
       canvas.translate(getPaddingLeft(), getPaddingTop());
