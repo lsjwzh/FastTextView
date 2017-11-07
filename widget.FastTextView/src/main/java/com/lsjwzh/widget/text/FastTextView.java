@@ -124,7 +124,6 @@ public class FastTextView extends FastTextLayoutView {
   public void setGravity(int gravity) {
     if (mAttrsHelper.setGravity(gravity)) {
       setTextLayout(null);
-      requestLayout();
     }
   }
 
@@ -179,6 +178,17 @@ public class FastTextView extends FastTextLayoutView {
 
   public float getTextSize() {
     return mTextPaint.getTextSize();
+  }
+
+  public int getEllipsize() {
+    return mAttrsHelper.mEllipsize;
+  }
+
+  public void setEllipsize(int ellipsize) {
+    if (mAttrsHelper.mEllipsize != ellipsize) {
+      mAttrsHelper.mEllipsize = ellipsize;
+      setTextLayout(null);
+    }
   }
 
   public void setCustomEllipsisSpan(ReplacementSpan customEllipsisSpan) {
