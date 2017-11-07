@@ -1,9 +1,6 @@
 package com.lsjwzh.widget.text;
 
 import android.content.Context;
-import android.content.res.Resources;
-import android.content.res.TypedArray;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Build;
 import android.support.annotation.NonNull;
@@ -30,12 +27,8 @@ public class FastTextView extends FastTextLayoutView {
   private static final String TAG = FastTextView.class.getSimpleName();
   private CharSequence mText;
   private TextPaint mTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
-  private int mSpacingAdd;
-  private float mSpacingMultiplier = 1f;
-  private int mMaxWidth = Integer.MAX_VALUE;
-  private int mMaxLines = Integer.MAX_VALUE;
-  private int mEllipsize = -1;
   private ReplacementSpan mCustomEllipsisSpan;
+  TextViewAttrsHelper mAttrsHelper = new TextViewAttrsHelper();
 
   public FastTextView(Context context) {
     this(context, null);
@@ -57,36 +50,10 @@ public class FastTextView extends FastTextLayoutView {
   }
 
   private void init(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-    final Resources.Theme theme = context.getTheme();
+    mAttrsHelper.init(context, attrs, defStyleAttr, defStyleRes);
     TextPaint textPaint = getTextPaint();
-    TypedArray a = theme.obtainStyledAttributes(attrs,
-        com.android.internal.R.styleable.TextView, defStyleAttr, defStyleRes);
-    int n = a.getIndexCount();
-    for (int i = 0; i < n; i++) {
-      int attr = a.getIndex(i);
-      switch (attr) {
-        case com.android.internal.R.styleable.TextView_ellipsize:
-          mEllipsize = a.getInt(attr, mEllipsize);
-          break;
-        case com.android.internal.R.styleable.TextView_maxLines:
-          mMaxLines = a.getInt(attr, Integer.MAX_VALUE);
-          break;
-        case com.android.internal.R.styleable.TextView_textColor:
-          // Do not support ColorState
-          textPaint.setColor(a.getColor(attr, Color.BLACK));
-          break;
-        case com.android.internal.R.styleable.TextView_textSize:
-          textPaint.setTextSize(a.getDimensionPixelSize(attr, 15));
-          break;
-        case com.android.internal.R.styleable.TextView_lineSpacingExtra:
-          mSpacingAdd = a.getDimensionPixelSize(attr, mSpacingAdd);
-          break;
-        case com.android.internal.R.styleable.TextView_lineSpacingMultiplier:
-          mSpacingMultiplier = a.getFloat(attr, mSpacingMultiplier);
-          break;
-      }
-    }
-
+    textPaint.setColor(mAttrsHelper.mTextColor);
+    textPaint.setTextSize(mAttrsHelper.mTextSize);
   }
 
   @Override
@@ -111,8 +78,8 @@ public class FastTextView extends FastTextLayoutView {
   protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
     long start = System.currentTimeMillis();
     int width = MeasureSpec.getSize(widthMeasureSpec);
-    if (mMaxWidth != Integer.MAX_VALUE && width > mMaxWidth) {
-      widthMeasureSpec = MeasureSpec.makeMeasureSpec(mMaxWidth, MeasureSpec.EXACTLY);
+    if (mAttrsHelper.mMaxWidth != Integer.MAX_VALUE && width > mAttrsHelper.mMaxWidth) {
+      widthMeasureSpec = MeasureSpec.makeMeasureSpec(mAttrsHelper.mMaxWidth, MeasureSpec.EXACTLY);
     }
     if (!TextUtils.isEmpty(mText) &&
         ((mLayout == null && width > 0) || (mLayout != null && width != mLayout.getWidth()))) {
@@ -126,6 +93,11 @@ public class FastTextView extends FastTextLayoutView {
     }
   }
 
+  public TextPaint getPaint() {
+    return mTextPaint;
+  }
+
+  @Deprecated
   public TextPaint getTextPaint() {
     return mTextPaint;
   }
@@ -141,30 +113,55 @@ public class FastTextView extends FastTextLayoutView {
     return mText;
   }
 
-  public void setTextSize(float textSize) {
-    setTextSize(textSize, TypedValue.COMPLEX_UNIT_SP);
+  /**
+   * Sets the horizontal alignment of the text and the
+   * vertical gravity that will be used when there is extra space
+   * in the TextView beyond what is required for the text itself.
+   *
+   * @attr ref android.R.styleable#TextView_gravity
+   * @see android.view.Gravity
+   */
+  public void setGravity(int gravity) {
+    if (mAttrsHelper.setGravity(gravity)) {
+      setTextLayout(null);
+      requestLayout();
+    }
+  }
+
+  /**
+   * Returns the horizontal and vertical alignment of this TextView.
+   *
+   * @attr ref android.R.styleable#TextView_gravity
+   * @see android.view.Gravity
+   */
+  public int getGravity() {
+    return mAttrsHelper.getGravity();
   }
 
   public void setMaxWidth(int width) {
-    if (mMaxWidth != width) {
-      mMaxWidth = width;
+    if (mAttrsHelper.mMaxWidth != width) {
+      mAttrsHelper.mMaxWidth = width;
       setTextLayout(null);
     }
   }
 
   public int getMaxWidth() {
-    return mMaxWidth;
+    return mAttrsHelper.mMaxWidth;
   }
 
   public void setMaxLines(int maxLines) {
-    if (mMaxLines != maxLines) {
-      mMaxLines = maxLines;
+    if (mAttrsHelper.mMaxLines != maxLines) {
+      mAttrsHelper.mMaxLines = maxLines;
       setTextLayout(null);
     }
   }
 
   public int getMaxLines() {
-    return mMaxLines;
+    return mAttrsHelper.mMaxLines;
+  }
+
+  public void setTextSize(float textSize) {
+    setTextSize(textSize, TypedValue.COMPLEX_UNIT_SP);
   }
 
   /**
@@ -178,6 +175,10 @@ public class FastTextView extends FastTextLayoutView {
     float rawTextSize = TypedValue.applyDimension(
         unit, textSize, getResources().getDisplayMetrics());
     mTextPaint.setTextSize(rawTextSize);
+  }
+
+  public float getTextSize() {
+    return mTextPaint.getTextSize();
   }
 
   public void setCustomEllipsisSpan(ReplacementSpan customEllipsisSpan) {
@@ -198,9 +199,9 @@ public class FastTextView extends FastTextLayoutView {
     }
 
     StaticLayoutBuilderCompat layoutBuilder = StaticLayoutBuilderCompat.obtain(text, 0, text.length(), mTextPaint, maxWidth > 0 ? Math.min(maxWidth, width) : width);
-    layoutBuilder.setLineSpacing(mSpacingAdd, mSpacingMultiplier)
-        .setMaxLines(mMaxLines)
-        .setAlignment(Layout.Alignment.ALIGN_NORMAL)
+    layoutBuilder.setLineSpacing(mAttrsHelper.mSpacingAdd, mAttrsHelper.mSpacingMultiplier)
+        .setMaxLines(mAttrsHelper.mMaxLines)
+        .setAlignment(TextViewAttrsHelper.getLayoutAlignment(this, getGravity()))
         .setIncludePad(true);
     TextUtils.TruncateAt truncateAt = getTruncateAt();
     layoutBuilder.setEllipsize(truncateAt);
@@ -225,7 +226,7 @@ public class FastTextView extends FastTextLayoutView {
   }
 
   private TextUtils.TruncateAt getTruncateAt() {
-    switch (mEllipsize) {
+    switch (mAttrsHelper.mEllipsize) {
       // do not support marque
       case 1:
         return TextUtils.TruncateAt.START;
