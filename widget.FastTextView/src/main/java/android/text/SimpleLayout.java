@@ -67,4 +67,14 @@ public class SimpleLayout extends Layout {
   public int getTopPadding() {
     return 0;
   }
+
+
+  /* package */ static final int RUN_LENGTH_MASK = 0x03ffffff;
+  /* package */ static final int RUN_LEVEL_SHIFT = 26;
+  /* package */ static final int RUN_RTL_FLAG = 1 << RUN_LEVEL_SHIFT;
+
+  /* package */ public static final Layout.Directions DIRS_ALL_LEFT_TO_RIGHT =
+      new Layout.Directions(new int[] { 0, RUN_LENGTH_MASK });
+  /* package */ public static final Layout.Directions DIRS_ALL_RIGHT_TO_LEFT =
+      new Layout.Directions(new int[] { 0, RUN_LENGTH_MASK | RUN_RTL_FLAG });
 }

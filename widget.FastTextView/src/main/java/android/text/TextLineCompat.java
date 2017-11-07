@@ -1,15 +1,17 @@
 package android.text;
 
-import android.annotation.NonNull;
+import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.os.Build;
+import android.text.Layout.TabStops;
 
 /**
  * Make TextLine can be accessed by other package.
  */
-public class TextLineProxy {
-  private TextLine mTextLine;
+public class TextLineCompat implements ITextLine {
+  private ITextLine mTextLine;
 
-  private TextLineProxy(@NonNull TextLine textLine) {
+  private TextLineCompat(ITextLine textLine) {
     mTextLine = textLine;
   }
 
@@ -18,8 +20,13 @@ public class TextLineProxy {
    *
    * @return an uninitialized TextLine
    */
-  public static TextLineProxy obtain() {
-    return new TextLineProxy(TextLine.obtain());
+  public static TextLineCompat obtain() {
+
+    if (Build.VERSION.SDK_INT >= 23) {
+      return new TextLineCompat(TextLineImpl23.obtain());
+    } else {
+      return new TextLineCompat(TextLineImpl15.obtain());
+    }
   }
 
   /**
@@ -29,8 +36,12 @@ public class TextLineProxy {
    * @param tl the textLine
    *           TextLine
    */
-  public static void recycle(TextLineProxy tl) {
-    TextLine.recycle(tl.mTextLine);
+  public static void recycle(TextLineCompat tl) {
+    if (Build.VERSION.SDK_INT >= 23) {
+      TextLineImpl23.recycle((TextLineImpl23) tl.mTextLine);
+    } else {
+      TextLineImpl15.recycle((TextLineImpl15) tl.mTextLine);
+    }
   }
 
   /**
@@ -43,9 +54,9 @@ public class TextLineProxy {
    * @param dir        the paragraph direction of this line
    * @param directions the directions information of this line
    */
-  public void set(TextPaint paint, CharSequence text, int start, int limit, int dir,
-           Layout.Directions directions) {
-    mTextLine.set(paint, text, start, limit, dir, directions, false, null);
+  @Override
+  public void set(TextPaint paint, CharSequence text, int start, int limit, int dir, Directions directions, boolean hasTabs, TabStops tabStops) {
+    mTextLine.set(paint, text, start, limit, dir, directions, hasTabs, tabStops);
   }
 
   /**
@@ -56,5 +67,10 @@ public class TextLineProxy {
    */
   public float metrics(Paint.FontMetricsInt fmi) {
     return mTextLine.metrics(fmi);
+  }
+
+  @Override
+  public void draw(Canvas c, float x, int top, int y, int bottom) {
+    mTextLine.draw(c, x, top, y, bottom);
   }
 }

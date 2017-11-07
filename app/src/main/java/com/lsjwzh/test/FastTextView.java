@@ -35,7 +35,7 @@ public class FastTextView extends com.lsjwzh.widget.text.FastTextView {
   @Override
   protected void onDraw(Canvas canvas) {
     long start = System.currentTimeMillis();
-    for (int i = 0; i < 1000; i++) {
+    for (int i = 0; i < Const.LOOP_COUNT; i++) {
       super.onDraw(canvas);
     }
     long end = System.currentTimeMillis();
@@ -47,7 +47,7 @@ public class FastTextView extends com.lsjwzh.widget.text.FastTextView {
   @Override
   protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
     long start = System.currentTimeMillis();
-    for (int i = 0; i < 1000; i++) {
+    for (int i = 0; i < Const.LOOP_COUNT; i++) {
       super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
     long end = System.currentTimeMillis();

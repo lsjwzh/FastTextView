@@ -1,4 +1,4 @@
-package com.wechat.testdemo;
+package com.lsjwzh.test;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -30,18 +30,18 @@ public class TestTextView extends TextView {
   @Override
   protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
     long start = SystemClock.elapsedRealtime();
-    for (int i = 0; i < 1000; i++) {
+    for (int i = 0; i < Const.LOOP_COUNT; i++) {
       super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
     long end = SystemClock.elapsedRealtime();
-    Log.d(TAG, TAG + " measure cost:" + (end - start));
+    Log.d(TAG, TAG + " onMeasure cost:" + (end - start));
 
   }
 
   @Override
   protected void onDraw(Canvas canvas) {
     long start = SystemClock.elapsedRealtime();
-    for (int i = 0; i < 1000; i++) {
+    for (int i = 0; i < Const.LOOP_COUNT; i++) {
       super.onDraw(canvas);
     }
     long end = SystemClock.elapsedRealtime();
