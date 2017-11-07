@@ -18,6 +18,19 @@
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:textColor="#ffffff"
+      android:text="TextLineView:"/>
+
+    <com.lsjwzh.test.TextLineView
+      android:id="@+id/text_line_tv"
+      android:background="#6600ffff"
+      android:layout_width="wrap_content"
+      android:layout_height="20dp"
+      android:clickable="true"/>
+
+    <TextView
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:textColor="#ffffff"
       android:text="FastTextLayoutView:"/>
 
     <com.lsjwzh.test.FastTextLayoutView
@@ -50,7 +63,7 @@
       android:textColor="#ffffff"
       android:text="Android TextView:"/>
 
-    <com.wechat.testdemo.TestTextView
+    <com.lsjwzh.test.TestTextView
       android:id="@+id/system_tv"
       android:background="#6600ffff"
       android:layout_width="wrap_content"
@@ -61,6 +74,24 @@
       android:maxLines="2"
       android:textSize="20sp"/>
 
+
+    <TextView
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:textColor="#ffffff"
+      android:text="SingleLineTextView:"/>
+
+    <com.lsjwzh.test.TestSingleLineTextView
+      android:id="@+id/single_line_tv"
+      android:background="#6600ffff"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:clickable="true"/>
+
+
+    <View
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"/>
   </LinearLayout>
 
 </ScrollView>

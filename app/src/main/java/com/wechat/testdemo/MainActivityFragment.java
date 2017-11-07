@@ -26,6 +26,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.lsjwzh.test.TestSingleLineTextView;
+import com.lsjwzh.test.TextLineView;
 import com.lsjwzh.widget.text.FastTextLayoutView;
 import com.lsjwzh.widget.text.FastTextView;
 import com.lsjwzh.widget.text.StrokeSpan;
@@ -128,6 +130,12 @@ public class MainActivityFragment extends Fragment {
     TextView tv = (TextView) mRootView.findViewById(R.id.system_tv);
     tv.setText(spannableStringBuilder);
     tv.setMovementMethod(LinkMovementMethod.getInstance());
+
+    TestSingleLineTextView testSingleLineTextView = (TestSingleLineTextView) mRootView.findViewById(R.id.single_line_tv);
+    testSingleLineTextView.setText(spannableStringBuilder);
+
+    TextLineView textLineView = (TextLineView) mRootView.findViewById(R.id.text_line_tv);
+    textLineView.setText(spannableStringBuilder);
     return mRootView;
   }
 
