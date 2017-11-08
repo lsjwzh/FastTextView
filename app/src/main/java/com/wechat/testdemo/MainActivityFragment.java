@@ -141,6 +141,8 @@ public class MainActivityFragment extends Fragment {
 
     ReadMoreTextView readMoreTextView = (ReadMoreTextView) mRootView.findViewById(R.id.readmore_tv);
     readMoreTextView.setText(spannableStringBuilder);
+    readMoreTextView.setCustomEllipsisSpan(new ReadMoreTextView.EllipsisSpan("  Read More"));
+    readMoreTextView.setCustomCollapseSpan(new ReadMoreTextView.EllipsisSpan("  Collapse"));
     return mRootView;
   }
 

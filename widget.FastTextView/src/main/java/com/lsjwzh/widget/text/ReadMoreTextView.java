@@ -19,14 +19,14 @@ import android.view.View;
 
 public class ReadMoreTextView extends FastTextView {
   static final String TAG = ReadMoreTextView.class.getSimpleName();
-  public static final char[] ELLIPSIS_NORMAL = {'\u2026'}; // this is "..."
-  public static final char[] COLLAPSE_NORMAL = {'\u25b2'}; // this is "▲"
+  public static final String ELLIPSIS_NORMAL = "\u2026"; // this is "..."
+  public static final String COLLAPSE_NORMAL = "\u25b2"; // this is "▲"
 
 
   private boolean mIsShowAll;
   private StaticLayout mAllTextLayout;
   private StaticLayout mWithEllipsisLayout;
-  private ReplacementSpan mCollapseSpan = new CollapseSpan();
+  private ReplacementSpan mCollapseSpan = new EllipsisSpan(COLLAPSE_NORMAL);
 
   public ReadMoreTextView(Context context) {
     this(context, null);
@@ -38,13 +38,13 @@ public class ReadMoreTextView extends FastTextView {
 
   public ReadMoreTextView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
     super(context, attrs, defStyleAttr);
-    setCustomEllipsisSpan(new EllipsisSpan());
+    setCustomEllipsisSpan(new EllipsisSpan(ELLIPSIS_NORMAL));
   }
 
   @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
   public ReadMoreTextView(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
     super(context, attrs, defStyleAttr, defStyleRes);
-    setCustomEllipsisSpan(new EllipsisSpan());
+    setCustomEllipsisSpan(new EllipsisSpan(ELLIPSIS_NORMAL));
   }
 
 
@@ -124,38 +124,20 @@ public class ReadMoreTextView extends FastTextView {
   }
 
   public static class EllipsisSpan extends ReplacementSpan implements ClickableSpanUtil.Clickable {
+    String mText;
+
+    public EllipsisSpan(String text) {
+      mText = text;
+    }
 
     @Override
     public void draw(@NonNull Canvas canvas, CharSequence text, @IntRange(from = 0) int start, @IntRange(from = 0) int end, float x, int top, int y, int bottom, @NonNull Paint paint) {
-      canvas.drawText(ELLIPSIS_NORMAL, 0, ELLIPSIS_NORMAL.length, x, y, paint);
+      canvas.drawText(mText, 0, mText.length(), x, y, paint);
     }
 
     @Override
     public int getSize(@NonNull Paint paint, CharSequence text, @IntRange(from = 0) int start, @IntRange(from = 0) int end, @Nullable Paint.FontMetricsInt fm) {
-      return (int) Math.ceil(paint.measureText(ELLIPSIS_NORMAL, 0, ELLIPSIS_NORMAL.length));
-    }
-
-    @Override
-    public void onClick(View widget) {
-      ReadMoreTextView readMoreTextView = (ReadMoreTextView) widget;
-      if (readMoreTextView.isShowAll()) {
-        readMoreTextView.showEllipsis();
-      } else {
-        readMoreTextView.showAll();
-      }
-    }
-  }
-
-  public static class CollapseSpan extends ReplacementSpan implements ClickableSpanUtil.Clickable {
-
-    @Override
-    public void draw(@NonNull Canvas canvas, CharSequence text, @IntRange(from = 0) int start, @IntRange(from = 0) int end, float x, int top, int y, int bottom, @NonNull Paint paint) {
-      canvas.drawText(COLLAPSE_NORMAL, 0, COLLAPSE_NORMAL.length, x, y, paint);
-    }
-
-    @Override
-    public int getSize(@NonNull Paint paint, CharSequence text, @IntRange(from = 0) int start, @IntRange(from = 0) int end, @Nullable Paint.FontMetricsInt fm) {
-      return (int) Math.ceil(paint.measureText(COLLAPSE_NORMAL, 0, COLLAPSE_NORMAL.length));
+      return (int) Math.ceil(paint.measureText(mText, 0, mText.length()));
     }
 
     @Override
