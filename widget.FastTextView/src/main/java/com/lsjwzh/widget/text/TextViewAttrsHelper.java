@@ -33,6 +33,9 @@ public class TextViewAttrsHelper {
     for (int i = 0; i < n; i++) {
       int attr = a.getIndex(i);
       switch (attr) {
+        case com.android.internal.R.styleable.TextView_gravity:
+          mGravity = a.getInt(attr, Gravity.TOP | Gravity.LEFT);
+          break;
         case com.android.internal.R.styleable.TextView_text:
           mText = a.getText(attr);
           break;

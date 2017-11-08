@@ -1,6 +1,7 @@
 package com.lsjwzh.widget.text;
 
 import android.content.Context;
+import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.os.Build;
 import android.support.annotation.NonNull;
@@ -19,6 +20,7 @@ import android.text.style.ReplacementSpan;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.MotionEvent;
 
 /**
@@ -111,6 +113,56 @@ public class FastTextView extends FastTextLayoutView {
     if (BuildConfig.DEBUG) {
       Log.d(TAG, "onMeasure cost:" + (end - start));
     }
+  }
+
+  @Override
+  protected void onDraw(Canvas canvas) {
+    long start = System.currentTimeMillis();
+    canvas.save();
+    if (mLayout != null) {
+      int translateX, translateY;
+      int horizontalGravity = getGravity() & Gravity.RELATIVE_HORIZONTAL_GRAVITY_MASK;
+      switch (horizontalGravity) {
+        default:
+        case Gravity.LEFT:
+          translateX = getPaddingLeft();
+          break;
+        case Gravity.CENTER_HORIZONTAL:
+          translateX = getPaddingLeft() + (getInnerWidth() - mLayout.getWidth()) / 2;
+          break;
+        case Gravity.RIGHT:
+          translateX = getPaddingLeft() + getInnerWidth() - mLayout.getWidth();
+          break;
+      }
+      int verticalGravity = getGravity() & Gravity.VERTICAL_GRAVITY_MASK;
+      switch (verticalGravity) {
+        default:
+        case Gravity.TOP:
+          translateY = getPaddingTop();
+          break;
+        case Gravity.CENTER_VERTICAL:
+          translateY = getPaddingTop() + (getInnerHeight() - mLayout.getHeight()) / 2;
+          break;
+        case Gravity.BOTTOM:
+          translateY = getPaddingTop() + getInnerHeight() - mLayout.getHeight();
+          break;
+      }
+      canvas.translate(translateX, translateY);
+      mLayout.draw(canvas);
+    }
+    canvas.restore();
+    long end = System.currentTimeMillis();
+    if (BuildConfig.DEBUG) {
+      Log.d(TAG, "onDraw cost:" + (end - start));
+    }
+  }
+
+  private int getInnerWidth() {
+    return getWidth() - getPaddingLeft() - getPaddingRight();
+  }
+
+  private int getInnerHeight() {
+    return getHeight() - getPaddingTop() - getPaddingBottom();
   }
 
   public TextPaint getPaint() {
