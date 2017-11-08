@@ -102,8 +102,8 @@ public class FastTextView extends FastTextLayoutView {
     } else {
       if (mLayout == null && !TextUtils.isEmpty(mText)) {
         mLayout = makeLayout(mText, mAttrsHelper.mMaxWidth);
+        widthMeasureSpec = MeasureSpec.makeMeasureSpec(mLayout.getWidth(), MeasureSpec.EXACTLY);
       }
-      widthMeasureSpec = MeasureSpec.makeMeasureSpec(mLayout.getWidth(), MeasureSpec.EXACTLY);
     }
     super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 
