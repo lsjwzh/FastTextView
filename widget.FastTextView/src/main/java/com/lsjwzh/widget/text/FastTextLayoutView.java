@@ -9,6 +9,7 @@ import android.text.Layout;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 
 /**
  * A custom view for rendering layout directly.
@@ -52,16 +53,30 @@ public class FastTextLayoutView extends View {
   @Override
   protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
     long start = System.currentTimeMillis();
-    super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     if (mLayout != null) {
-      setMeasuredDimension(
-          getPaddingLeft() + getPaddingRight() + mLayout.getWidth(),
-          getPaddingTop() + getPaddingBottom() + mLayout.getHeight());
+      setMeasuredDimension(getMeasuredWidth(getPaddingLeft() + getPaddingRight() + mLayout.getWidth(), widthMeasureSpec),
+          getMeasuredHeight(getPaddingTop() + getPaddingBottom() + mLayout.getHeight(), heightMeasureSpec));
+    } else {
+      super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
     long end = System.currentTimeMillis();
     if (BuildConfig.DEBUG) {
       Log.d(TAG, "onMeasure cost:" + (end - start));
     }
+  }
+
+  protected int getMeasuredWidth(int size, int measureSpec) {
+    if (getLayoutParams().width == ViewGroup.LayoutParams.WRAP_CONTENT) {
+      return size;
+    }
+    return getDefaultSize(size, measureSpec);
+  }
+
+  protected int getMeasuredHeight(int size, int measureSpec) {
+    if (getLayoutParams().height == ViewGroup.LayoutParams.WRAP_CONTENT) {
+      return size;
+    }
+    return getDefaultSize(size, measureSpec);
   }
 
   public void setTextLayout(Layout layout) {
