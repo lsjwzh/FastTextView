@@ -52,6 +52,7 @@ public class FastTextView extends FastTextLayoutView {
 
   private void init(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
     mAttrsHelper.init(context, attrs, defStyleAttr, defStyleRes);
+    setText(mAttrsHelper.mText);
     TextPaint textPaint = getTextPaint();
     textPaint.setColor(mAttrsHelper.mTextColor);
     textPaint.setTextSize(mAttrsHelper.mTextSize);

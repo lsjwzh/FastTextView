@@ -22,6 +22,7 @@ public class TextViewAttrsHelper {
   int mEllipsize = -1;
   int mTextColor = Color.BLACK;
   int mTextSize = 15;
+  CharSequence mText;
   private int mGravity;
 
   public void init(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
@@ -32,6 +33,9 @@ public class TextViewAttrsHelper {
     for (int i = 0; i < n; i++) {
       int attr = a.getIndex(i);
       switch (attr) {
+        case com.android.internal.R.styleable.TextView_text:
+          mText = a.getText(attr);
+          break;
         case com.android.internal.R.styleable.TextView_ellipsize:
           mEllipsize = a.getInt(attr, mEllipsize);
           break;
