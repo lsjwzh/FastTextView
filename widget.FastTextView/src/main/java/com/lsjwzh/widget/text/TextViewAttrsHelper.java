@@ -64,7 +64,6 @@ public class TextViewAttrsHelper {
    * vertical gravity that will be used when there is extra space
    * in the TextView beyond what is required for the text itself.
    *
-   * @attr ref android.R.styleable#TextView_gravity
    * @see android.view.Gravity
    */
   public boolean setGravity(int gravity) {
@@ -93,7 +92,6 @@ public class TextViewAttrsHelper {
   /**
    * Returns the horizontal and vertical alignment of this TextView.
    *
-   * @attr ref android.R.styleable#TextView_gravity
    * @see android.view.Gravity
    */
   public int getGravity() {

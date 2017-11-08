@@ -42,7 +42,7 @@ repositories {
 
 dependencies {
     ...
-    compile 'com.lsjwzh.widget:FastTextView:1.0.5'
+    compile 'com.lsjwzh.widget:FastTextView:1.1.0'
     ...
 }
 ```
@@ -86,7 +86,7 @@ java code
 
 2.ColorState background
 
-3.ReadMore
+<del>3.ReadMore</del>
 
 <del>4.Ellipsis</del>
 

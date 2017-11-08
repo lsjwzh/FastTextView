@@ -61,7 +61,6 @@ public class SingleLineTextView extends FastTextLayoutView {
    * vertical gravity that will be used when there is extra space
    * in the TextView beyond what is required for the text itself.
    *
-   * @attr ref android.R.styleable#TextView_gravity
    * @see android.view.Gravity
    */
   public void setGravity(int gravity) {
@@ -73,7 +72,6 @@ public class SingleLineTextView extends FastTextLayoutView {
   /**
    * Returns the horizontal and vertical alignment of this TextView.
    *
-   * @attr ref android.R.styleable#TextView_gravity
    * @see android.view.Gravity
    */
   public int getGravity() {
