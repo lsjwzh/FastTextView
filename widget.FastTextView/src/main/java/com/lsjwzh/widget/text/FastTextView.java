@@ -89,13 +89,20 @@ public class FastTextView extends FastTextLayoutView {
   @Override
   protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
     long start = System.currentTimeMillis();
-    int width = MeasureSpec.getSize(widthMeasureSpec);
-    if (mAttrsHelper.mMaxWidth != Integer.MAX_VALUE && width > mAttrsHelper.mMaxWidth) {
-      widthMeasureSpec = MeasureSpec.makeMeasureSpec(mAttrsHelper.mMaxWidth, MeasureSpec.EXACTLY);
-    }
-    if (!TextUtils.isEmpty(mText) &&
-        ((mLayout == null && width > 0) || (mLayout != null && width != mLayout.getWidth()))) {
-      mLayout = makeLayout(mText, width);
+    if (MeasureSpec.getMode(widthMeasureSpec) == MeasureSpec.EXACTLY) {
+      int width = MeasureSpec.getSize(widthMeasureSpec);
+      if (mAttrsHelper.mMaxWidth != Integer.MAX_VALUE && width > mAttrsHelper.mMaxWidth) {
+        widthMeasureSpec = MeasureSpec.makeMeasureSpec(mAttrsHelper.mMaxWidth, MeasureSpec.EXACTLY);
+      }
+      if (!TextUtils.isEmpty(mText) &&
+          ((mLayout == null && width > 0) || (mLayout != null && width != mLayout.getWidth()))) {
+        mLayout = makeLayout(mText, width);
+      }
+    } else {
+      if (mLayout == null) {
+        mLayout = makeLayout(mText, mAttrsHelper.mMaxWidth);
+      }
+      widthMeasureSpec = MeasureSpec.makeMeasureSpec(mLayout.getWidth(), MeasureSpec.EXACTLY);
     }
     super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 
