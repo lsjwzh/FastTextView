@@ -11,6 +11,7 @@ import android.text.EllipsisSpannedContainer;
 import android.text.Layout;
 import android.text.LayoutUtils;
 import android.text.Spannable;
+import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.StaticLayout;
 import android.text.StaticLayoutBuilderCompat;
@@ -75,13 +76,13 @@ public class FastTextView extends FastTextLayoutView {
       }
       if (textSource instanceof Spannable) {
         if (ClickableSpanUtil.handleClickableSpan(this, textLayout, (Spannable) textSource, event)
-          || ClickableSpanUtil.handleClickableSpan(this, textLayout, (Spannable) textSource,
+            || ClickableSpanUtil.handleClickableSpan(this, textLayout, (Spannable) textSource,
             ClickableSpanUtil.Clickable.class, event)
             || (mCustomEllipsisSpan != null
             && mCustomEllipsisSpan instanceof ClickableSpanUtil.Clickable
             && ellipsisSpannedContainer != null
             && ClickableSpanUtil.handleClickableSpan(this, textLayout, ellipsisSpannedContainer,
-                ((ClickableSpanUtil.Clickable) mCustomEllipsisSpan).getClass(), event))) {
+            ((ClickableSpanUtil.Clickable) mCustomEllipsisSpan).getClass(), event))) {
           return true;
         }
       }
@@ -93,19 +94,15 @@ public class FastTextView extends FastTextLayoutView {
   protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
     long start = System.currentTimeMillis();
     int width = MeasureSpec.getSize(widthMeasureSpec);
-    if (MeasureSpec.getMode(widthMeasureSpec) == MeasureSpec.EXACTLY) {
+    if (MeasureSpec.getMode(widthMeasureSpec) != MeasureSpec.EXACTLY) {
       if (mAttrsHelper.mMaxWidth != Integer.MAX_VALUE && width > mAttrsHelper.mMaxWidth) {
-        widthMeasureSpec = MeasureSpec.makeMeasureSpec(mAttrsHelper.mMaxWidth, MeasureSpec.EXACTLY);
+        width = mAttrsHelper.mMaxWidth;
       }
-      if (!TextUtils.isEmpty(mText) &&
-          ((mLayout == null && width > 0) || (mLayout != null && width != mLayout.getWidth()))) {
-        mLayout = makeLayout(mText, width);
-      }
-    } else {
-      if (mLayout == null && !TextUtils.isEmpty(mText)) {
-        mLayout = makeLayout(mText, width);
-        widthMeasureSpec = MeasureSpec.makeMeasureSpec(mLayout.getWidth(), MeasureSpec.EXACTLY);
-      }
+    }
+    if (!TextUtils.isEmpty(mText) && width > 0 &&
+        (mLayout == null || width < mLayout.getWidth()
+            || (width > mLayout.getWidth() && mLayout.getLineCount() > 1))) {
+      mLayout = makeLayout(mText, width);
     }
     super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 
@@ -244,6 +241,7 @@ public class FastTextView extends FastTextLayoutView {
     float rawTextSize = TypedValue.applyDimension(
         unit, textSize, getResources().getDisplayMetrics());
     mTextPaint.setTextSize(rawTextSize);
+    setTextLayout(null);
   }
 
   public float getTextSize() {
@@ -278,30 +276,35 @@ public class FastTextView extends FastTextLayoutView {
       width = (int) Math.ceil(mTextPaint.measureText(text, 0, text.length()));
     }
 
-    StaticLayoutBuilderCompat layoutBuilder = StaticLayoutBuilderCompat.obtain(text, 0, text.length(), mTextPaint, maxWidth > 0 ? Math.min(maxWidth, width) : width);
+    int layoutTargetWidth = maxWidth > 0 ? Math.min(maxWidth, width) : width;
+    StaticLayoutBuilderCompat layoutBuilder = StaticLayoutBuilderCompat.obtain(text, 0, text.length(), mTextPaint, layoutTargetWidth);
     layoutBuilder.setLineSpacing(mAttrsHelper.mSpacingAdd, mAttrsHelper.mSpacingMultiplier)
         .setMaxLines(mAttrsHelper.mMaxLines)
         .setAlignment(TextViewAttrsHelper.getLayoutAlignment(this, getGravity()))
         .setIncludePad(true);
     TextUtils.TruncateAt truncateAt = getTruncateAt();
-    layoutBuilder.setEllipsize(truncateAt);
-    if (truncateAt != null && text instanceof Spanned) {
-      EllipsisSpannedContainer ellipsisSpanned = new EllipsisSpannedContainer((Spanned) text);
-      ellipsisSpanned.setCustomEllipsisSpan(mCustomEllipsisSpan);
-      layoutBuilder.setText(ellipsisSpanned);
-      StaticLayout staticLayout = layoutBuilder.build();
-      int lineCount = staticLayout.getLineCount();
-      if (lineCount > 0) {
-        int beforeLastLine = 0;
-        for (int i = 0; i < lineCount - 1; i++) {
-          beforeLastLine += staticLayout.getLineVisibleEnd(i);
+    if (truncateAt != null) {
+      layoutBuilder.setEllipsize(truncateAt);
+      if (mCustomEllipsisSpan != null && width > layoutTargetWidth) {
+        layoutBuilder.setEllipsizedWidth(layoutTargetWidth - mCustomEllipsisSpan.getSize(getPaint(), mText, 0, mText.length(), null));
+        EllipsisSpannedContainer ellipsisSpanned =
+            new EllipsisSpannedContainer(text instanceof Spanned ? (Spanned) text : new SpannableString(text));
+        ellipsisSpanned.setCustomEllipsisSpan(mCustomEllipsisSpan);
+        layoutBuilder.setText(ellipsisSpanned);
+        StaticLayout staticLayout = layoutBuilder.build();
+        int lineCount = staticLayout.getLineCount();
+        if (lineCount > 0) {
+          int beforeLastLine = 0;
+          for (int i = 0; i < lineCount - 1; i++) {
+            beforeLastLine += staticLayout.getLineVisibleEnd(i);
+          }
+          int ellipsisCount = staticLayout.getEllipsisCount(lineCount - 1);
+          int ellipsisStart = staticLayout.getEllipsisStart(lineCount - 1);
+          int start = beforeLastLine + ellipsisStart;
+          ellipsisSpanned.setEllipsisRange(start, start + ellipsisCount);
         }
-        int ellipsisCount = staticLayout.getEllipsisCount(lineCount - 1);
-        int ellipsisStart = staticLayout.getEllipsisStart(lineCount - 1);
-        int start = beforeLastLine + ellipsisStart;
-        ellipsisSpanned.setEllipsisRange(start, start + ellipsisCount);
+        return staticLayout;
       }
-      return staticLayout;
     }
     return layoutBuilder.build();
   }

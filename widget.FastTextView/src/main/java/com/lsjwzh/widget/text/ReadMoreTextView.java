@@ -12,6 +12,7 @@ import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.StaticLayout;
 import android.text.StaticLayoutBuilderCompat;
+import android.text.TextUtils;
 import android.text.style.ReplacementSpan;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -51,15 +52,25 @@ public class ReadMoreTextView extends FastTextView {
   @Override
   protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
     long start = System.currentTimeMillis();
-    super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-    if (mLayout != null && !mIsShowAll) {
-      setMeasuredDimension(
-          getPaddingLeft() + getPaddingRight() + mLayout.getWidth(),
-          getPaddingTop() + getPaddingBottom() + mLayout.getHeight());
+    int width = MeasureSpec.getSize(widthMeasureSpec);
+    if (MeasureSpec.getMode(widthMeasureSpec) != MeasureSpec.EXACTLY) {
+      if (mAttrsHelper.mMaxWidth != Integer.MAX_VALUE && width > mAttrsHelper.mMaxWidth) {
+        width = mAttrsHelper.mMaxWidth;
+      }
+    }
+    if (!TextUtils.isEmpty(getText()) && width > 0 &&
+        (mLayout == null || width < mLayout.getWidth()
+            || (width > mLayout.getWidth() && mLayout.getLineCount() > 1))) {
+      mLayout = makeLayout(getText(), width);
+    }
+    if (mWithEllipsisLayout != null && !mIsShowAll) {
+      setMeasuredDimension(getMeasuredWidth(getPaddingLeft() + getPaddingRight() + mWithEllipsisLayout.getWidth(), widthMeasureSpec),
+          getMeasuredHeight(getPaddingTop() + getPaddingBottom() + mWithEllipsisLayout.getHeight(), heightMeasureSpec));
     } else if (mAllTextLayout != null && mIsShowAll) {
-      setMeasuredDimension(
-          getPaddingLeft() + getPaddingRight() + mAllTextLayout.getWidth(),
-          getPaddingTop() + getPaddingBottom() + mAllTextLayout.getHeight());
+      setMeasuredDimension(getMeasuredWidth(getPaddingLeft() + getPaddingRight() + mAllTextLayout.getWidth(), widthMeasureSpec),
+          getMeasuredHeight(getPaddingTop() + getPaddingBottom() + mAllTextLayout.getHeight(), heightMeasureSpec));
+    } else {
+      super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
     long end = System.currentTimeMillis();
     if (BuildConfig.DEBUG) {
@@ -71,9 +82,9 @@ public class ReadMoreTextView extends FastTextView {
   protected void onDraw(Canvas canvas) {
     long start = System.currentTimeMillis();
     canvas.save();
-    if (mLayout != null && !mIsShowAll) {
+    if (mWithEllipsisLayout != null && !mIsShowAll) {
       canvas.translate(getPaddingLeft(), getPaddingTop());
-      mLayout.draw(canvas);
+      mWithEllipsisLayout.draw(canvas);
     } else if (mAllTextLayout != null && mIsShowAll) {
       canvas.translate(getPaddingLeft(), getPaddingTop());
       mAllTextLayout.draw(canvas);

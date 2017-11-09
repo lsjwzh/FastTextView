@@ -42,7 +42,7 @@ repositories {
 
 dependencies {
     ...
-    compile 'com.lsjwzh.widget:FastTextView:1.1.3'
+    compile 'com.lsjwzh.widget:FastTextView:1.1.4'
     ...
 }
 ```
@@ -79,6 +79,15 @@ java code
     spannableStringBuilder.setSpan(strokeSpan, 0, spannableStringBuilder.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
     FastTextView fastTextView = (FastTextView) mRootView.findViewById(R.id.fast_tv2);
     fastTextView.setText(spannableStringBuilder);
+```
+
+### Read More
+```
+
+    ReadMoreTextView readMoreTextView = (ReadMoreTextView) mRootView.findViewById(R.id.readmore_tv);
+    readMoreTextView.setText(spannableStringBuilder);
+    readMoreTextView.setCustomEllipsisSpan(new ReadMoreTextView.EllipsisSpan("  Read More"));
+    readMoreTextView.setCustomCollapseSpan(new ReadMoreTextView.EllipsisSpan("  Collapse"));
 ```
 
 # TODO List
