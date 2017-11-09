@@ -92,8 +92,8 @@ public class FastTextView extends FastTextLayoutView {
   @Override
   protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
     long start = System.currentTimeMillis();
+    int width = MeasureSpec.getSize(widthMeasureSpec);
     if (MeasureSpec.getMode(widthMeasureSpec) == MeasureSpec.EXACTLY) {
-      int width = MeasureSpec.getSize(widthMeasureSpec);
       if (mAttrsHelper.mMaxWidth != Integer.MAX_VALUE && width > mAttrsHelper.mMaxWidth) {
         widthMeasureSpec = MeasureSpec.makeMeasureSpec(mAttrsHelper.mMaxWidth, MeasureSpec.EXACTLY);
       }
@@ -103,7 +103,7 @@ public class FastTextView extends FastTextLayoutView {
       }
     } else {
       if (mLayout == null && !TextUtils.isEmpty(mText)) {
-        mLayout = makeLayout(mText, mAttrsHelper.mMaxWidth);
+        mLayout = makeLayout(mText, width);
         widthMeasureSpec = MeasureSpec.makeMeasureSpec(mLayout.getWidth(), MeasureSpec.EXACTLY);
       }
     }
