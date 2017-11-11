@@ -1,11 +1,13 @@
 package com.wechat.testdemo;
 
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.text.Layout;
@@ -32,7 +34,6 @@ import com.lsjwzh.widget.text.FastTextLayoutView;
 import com.lsjwzh.widget.text.FastTextView;
 import com.lsjwzh.widget.text.ReadMoreTextView;
 import com.lsjwzh.widget.text.StrokeSpan;
-import com.lsjwzh.widget.text.TextMeasureUtil;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -50,14 +51,12 @@ public class MainActivityFragment extends Fragment {
     mRootView = inflater.inflate(R.layout.fragment_main, container, false);
     SpannableStringBuilder spannableStringBuilder = getSpannable();
 
-    FastTextLayoutView fastTextLayoutView = (FastTextLayoutView) mRootView.findViewById(R.id.fast_tv);
     TextPaint textPaint = new TextPaint();
     textPaint.setAntiAlias(true);
-    textPaint.setColor(Color.WHITE);
+    textPaint.setColor(Color.BLACK);
     float textSize = TypedValue.applyDimension(
         TypedValue.COMPLEX_UNIT_SP, 20, getResources().getDisplayMetrics());
     textPaint.setTextSize(textSize);
-//    spannableStringBuilder.getSpans(0, )
     Rect bounds = new Rect();
     String text = spannableStringBuilder.toString();
     long start = SystemClock.elapsedRealtime();
@@ -92,11 +91,8 @@ public class MainActivityFragment extends Fragment {
     end = SystemClock.elapsedRealtime();
     Log.d("test", "getSpans cost:" + (end - start));
 
-    // (int) (Math.ceil(withWithDesiredWidth) + 0.5f * textSize);//
     int width = (int) Math.ceil(Math.max(Math.max(withWithTextBounds, withWithMeasureText), withWithDesiredWidth));
-//    StaticLayout layout = new StaticLayout(spannableStringBuilder, textPaint,
-//        Math.min(width, getResources().getDisplayMetrics().widthPixels), Layout.Alignment.ALIGN_NORMAL,
-//        1.0f, 0.0f, true);
+
     StaticLayout layout = StaticLayoutBuilderCompat.obtain(spannableStringBuilder, 0, spannableStringBuilder.length(),
         textPaint, Math.min(width, getResources().getDisplayMetrics().widthPixels))
         .setAlignment(Layout.Alignment.ALIGN_NORMAL)
@@ -104,45 +100,44 @@ public class MainActivityFragment extends Fragment {
         .setEllipsize(TextUtils.TruncateAt.END)
         .setMaxLines(2).setIncludePad(true).build();
 
+    FastTextLayoutView fastTextLayoutView = (FastTextLayoutView) mRootView.findViewById(R.id.fast_tv);
     fastTextLayoutView.setTextLayout(layout);
 
-    TextPaint paint = new TextPaint();
-    paint.setStrokeCap(Paint.Cap.ROUND);
-    paint.setStrokeWidth(2);
-    paint.setStyle(Paint.Style.FILL_AND_STROKE);
-    Rect rect = new Rect();
-    TextMeasureUtil.getTextBounds(paint, text, 0, 10, rect);
-    Log.d("test", "stroke getTextBounds:" + rect.width());
-    float measureTextWidth = paint.measureText(text, 0, 10);
-    Log.d("test", "stroke measureText:" + measureTextWidth);
-    paint.setStyle(Paint.Style.FILL);
-    TextMeasureUtil.getTextBounds(paint, text, 0, 10, rect);
-    Log.d("test", "fill getTextBounds:" + rect.width());
-    measureTextWidth = paint.measureText(text, 0, 10);
-    Log.d("test", "fill measureText:" + measureTextWidth);
-
-    FastTextView fastTextView = (FastTextView) mRootView.findViewById(R.id.fast_tv2);
 
     Drawable drawable = getResources().getDrawable(R.mipmap.ic_launcher);
-    drawable.setBounds(0, 0, 70, 35);
-    fastTextView.setCustomEllipsisSpan(new ImageSpan(drawable));
+    drawable.setBounds(0, 0, 35, 35);
+    FastTextView fastTextView = (FastTextView) mRootView.findViewById(R.id.fast_tv2);
     fastTextView.setText(spannableStringBuilder);
+//    fastTextView.setCustomEllipsisSpan(new ImageSpan(drawable));
 
     TextView tv = (TextView) mRootView.findViewById(R.id.system_tv);
     tv.setText(spannableStringBuilder);
-    tv.setMovementMethod(LinkMovementMethod.getInstance());
+//    tv.setMovementMethod(LinkMovementMethod.getInstance());
 
     TestSingleLineTextView testSingleLineTextView = (TestSingleLineTextView) mRootView.findViewById(R.id.single_line_tv);
     testSingleLineTextView.setText(spannableStringBuilder);
 
-    TextLineView textLineView = (TextLineView) mRootView.findViewById(R.id.text_line_tv);
-    textLineView.setText(spannableStringBuilder);
-
 
     ReadMoreTextView readMoreTextView = (ReadMoreTextView) mRootView.findViewById(R.id.readmore_tv);
     readMoreTextView.setText(spannableStringBuilder);
-    readMoreTextView.setCustomEllipsisSpan(new ReadMoreTextView.EllipsisSpan("  Read More"));
-    readMoreTextView.setCustomCollapseSpan(new ReadMoreTextView.EllipsisSpan("  Collapse"));
+    readMoreTextView.setCustomEllipsisSpan(new ReadMoreTextView.EllipsisSpan("  Read More") {
+      @Override
+      public void draw(@NonNull Canvas canvas, CharSequence text, @IntRange(from = 0) int start, @IntRange(from = 0) int end, float x, int top, int y, int bottom, @NonNull Paint paint) {
+        int oldColor = paint.getColor();
+        paint.setColor(Color.RED);
+        super.draw(canvas, text, start, end, x, top, y, bottom, paint);
+        paint.setColor(oldColor);
+      }
+    });
+    readMoreTextView.setCustomCollapseSpan(new ReadMoreTextView.EllipsisSpan("  Collapse") {
+      @Override
+      public void draw(@NonNull Canvas canvas, CharSequence text, @IntRange(from = 0) int start, @IntRange(from = 0) int end, float x, int top, int y, int bottom, @NonNull Paint paint) {
+        int oldColor = paint.getColor();
+        paint.setColor(Color.RED);
+        super.draw(canvas, text, start, end, x, top, y, bottom, paint);
+        paint.setColor(oldColor);
+      }
+    });
     return mRootView;
   }
 
@@ -161,14 +156,9 @@ public class MainActivityFragment extends Fragment {
 //        ds.setStyle(Paint.Style.FILL_AND_STROKE);
         ds.setColor(Color.RED);
       }
-    }, 2, 13, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+    }, 0, 10, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
     Drawable drawable = getResources().getDrawable(R.mipmap.ic_launcher);
     drawable.setBounds(0, 0, 35, 35);
-    spannableStringBuilder.setSpan(new ImageSpan(drawable)
-        , 1, 2, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-
-    spannableStringBuilder.setSpan(new ImageSpan(drawable)
-        , 35, 36, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
 
     spannableStringBuilder.setSpan(new ImageSpan(drawable)
         , 36, 37, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);

@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.View;
 
 /**
+ * Just for test.
  * Created by wenye on 2017/11/5.
  */
 public class TextLineView extends View {
