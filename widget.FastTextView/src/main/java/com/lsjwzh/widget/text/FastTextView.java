@@ -301,7 +301,11 @@ public class FastTextView extends FastTextLayoutView {
           int ellipsisCount = staticLayout.getEllipsisCount(lineCount - 1);
           int ellipsisStart = staticLayout.getEllipsisStart(lineCount - 1);
           int start = beforeLastLine + ellipsisStart;
-          ellipsisSpanned.setEllipsisRange(start, start + ellipsisCount);
+          if (truncateAt == TextUtils.TruncateAt.END) {
+            ellipsisSpanned.setEllipsisRange(start, staticLayout.getLineVisibleEnd(lineCount - 1));
+          } else {
+            ellipsisSpanned.setEllipsisRange(start, start + ellipsisCount);
+          }
         }
         return staticLayout;
       }

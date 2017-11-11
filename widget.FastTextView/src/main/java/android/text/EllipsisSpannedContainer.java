@@ -67,7 +67,7 @@ public class EllipsisSpannedContainer implements Spanned {
 
   @Override
   public <T> T[] getSpans(int start, int end, Class<T> type) {
-    if (mEllipsisStart >= start && mEllipsisStart <= end) {
+    if (mEllipsisEnd >= end && mEllipsisStart <= end) {
       T[] spans1 = mSourceSpanned.getSpans(start, Math.max(mEllipsisStart, start), type);
       T[] spans2 = mSourceSpanned.getSpans(Math.min(end, mEllipsisEnd), end, type);
       int offset = mCustomEllipsisSpan != null
