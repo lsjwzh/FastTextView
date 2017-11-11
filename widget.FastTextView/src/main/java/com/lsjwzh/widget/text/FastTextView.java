@@ -285,12 +285,14 @@ public class FastTextView extends FastTextLayoutView {
     TextUtils.TruncateAt truncateAt = getTruncateAt();
     if (truncateAt != null) {
       layoutBuilder.setEllipsize(truncateAt);
-      if (mCustomEllipsisSpan != null && width > layoutTargetWidth) {
-        layoutBuilder.setEllipsizedWidth(layoutTargetWidth - mCustomEllipsisSpan.getSize(getPaint(), mText, 0, mText.length(), null));
+      if (width > layoutTargetWidth) {
         EllipsisSpannedContainer ellipsisSpanned =
             new EllipsisSpannedContainer(text instanceof Spanned ? (Spanned) text : new SpannableString(text));
         ellipsisSpanned.setCustomEllipsisSpan(mCustomEllipsisSpan);
         layoutBuilder.setText(ellipsisSpanned);
+        if (mCustomEllipsisSpan != null) {
+          layoutBuilder.setEllipsizedWidth(layoutTargetWidth - mCustomEllipsisSpan.getSize(getPaint(), mText, 0, mText.length(), null));
+        }
         StaticLayout staticLayout = layoutBuilder.build();
         int lineCount = staticLayout.getLineCount();
         if (lineCount > 0) {
