@@ -4,6 +4,8 @@ FastTextView is faster than Android TextView.
 FastTextView use StaticLayout to render Spanned String,
 so it support most features of Android TextView.
 
+Inspired by :
+https://engineering.instagram.com/improving-comment-rendering-on-android-a77d5db3d82e
 
 ## Features
 1.Faster measuring

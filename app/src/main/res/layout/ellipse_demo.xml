@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:fillViewport="true"
+  tools:context="com.wechat.testdemo.MainActivityFragment"
+  tools:showIn="@layout/activity_main">
+
+  <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="Android TextView:"/>
+
+    <com.lsjwzh.test.TestTextView
+      android:id="@+id/system_tv"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:background="#6600ffff"
+      android:ellipsize="end"
+      android:maxLines="2"
+      android:textSize="20sp"/>
+
+
+    <TextView
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="FastTextView:"/>
+
+    <com.lsjwzh.test.FastTextView
+      android:id="@+id/fast_tv2"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:background="#6600ffff"
+      android:clickable="true"
+      android:ellipsize="end"
+      android:gravity="center_vertical|left"
+      android:maxLines="2"
+      android:text="FastTextView"
+      android:textSize="20sp"/>
+
+    <TextView
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="ReadMoreTextView:"/>
+
+    <com.lsjwzh.widget.text.ReadMoreTextView
+      android:id="@+id/readmore_tv"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:background="#6600ffff"
+      android:clickable="true"
+      android:ellipsize="end"
+      android:maxLines="2"
+      android:textSize="20sp"/>
+
+    <TextView
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="FastTextLayoutView:"/>
+
+    <com.lsjwzh.test.FastTextLayoutView
+      android:id="@+id/fast_tv"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:background="#6600ffff"
+      android:clickable="true"/>
+
+    <TextView
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="SingleLineTextView:"/>
+
+    <com.lsjwzh.test.TestSingleLineTextView
+      android:id="@+id/single_line_tv"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:background="#6600ffff"
+      android:clickable="true"/>
+
+
+    <View
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"/>
+  </LinearLayout>
+
+</ScrollView>
