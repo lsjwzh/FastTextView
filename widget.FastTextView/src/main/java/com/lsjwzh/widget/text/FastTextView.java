@@ -104,7 +104,14 @@ public class FastTextView extends FastTextLayoutView {
             || (width > mLayout.getWidth() && mLayout.getLineCount() > 1))) {
       mLayout = makeLayout(mText, width);
     }
-    super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+    if (Build.VERSION.SDK_INT <= 19 && mLayout != null) {
+      // when <= api 19, maxLines can not be supported well.
+      int height = mAttrsHelper.mMaxLines < mLayout.getLineCount() ? mLayout.getLineTop(mAttrsHelper.mMaxLines) : mLayout.getHeight();
+      setMeasuredDimension(getMeasuredWidth(getPaddingLeft() + getPaddingRight() + mLayout.getWidth(), widthMeasureSpec),
+          getMeasuredHeight(getPaddingTop() + getPaddingBottom() + height, heightMeasureSpec));
+    } else {
+      super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+    }
 
     long end = System.currentTimeMillis();
     if (BuildConfig.DEBUG) {
@@ -292,9 +299,15 @@ public class FastTextView extends FastTextLayoutView {
         layoutBuilder.setText(ellipsisSpanned);
         if (mCustomEllipsisSpan != null) {
           layoutBuilder.setEllipsizedWidth(layoutTargetWidth - mCustomEllipsisSpan.getSize(getPaint(), mText, 0, mText.length(), null));
+        } else if (Build.VERSION.SDK_INT <= 19) {
+          ReadMoreTextView.EllipsisSpan ellipsisSpan = new ReadMoreTextView.EllipsisSpan(ReadMoreTextView.ELLIPSIS_NORMAL);
+          ellipsisSpanned.setCustomEllipsisSpan(ellipsisSpan);
+          layoutBuilder.setEllipsizedWidth(layoutTargetWidth - ellipsisSpan.getSize(getPaint(), mText, 0, mText.length(), null));
+        } else {
+          layoutBuilder.setEllipsizedWidth(layoutTargetWidth);
         }
         StaticLayout staticLayout = layoutBuilder.build();
-        int lineCount = staticLayout.getLineCount();
+        int lineCount = Math.min(staticLayout.getLineCount(), mAttrsHelper.mMaxLines);
         if (lineCount > 0) {
           int beforeLastLine = 0;
           for (int i = 0; i < lineCount - 1; i++) {
@@ -304,7 +317,7 @@ public class FastTextView extends FastTextLayoutView {
           int ellipsisStart = staticLayout.getEllipsisStart(lineCount - 1);
           int start = beforeLastLine + ellipsisStart;
           if (truncateAt == TextUtils.TruncateAt.END) {
-            ellipsisSpanned.setEllipsisRange(start, staticLayout.getLineVisibleEnd(lineCount - 1));
+            ellipsisSpanned.setEllipsisRange(start, ellipsisSpanned.length());
           } else {
             ellipsisSpanned.setEllipsisRange(start, start + ellipsisCount);
           }

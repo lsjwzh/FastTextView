@@ -5,6 +5,7 @@ import android.text.style.ReplacementSpan;
 import com.android.internal.util.ArrayUtils;
 import com.lsjwzh.widget.text.ReadMoreTextView;
 
+import java.lang.reflect.Array;
 import java.util.Arrays;
 
 /**
@@ -74,7 +75,7 @@ public class EllipsisSpannedContainer implements Spanned {
           && (type.isAssignableFrom(ReplacementSpan.class) || type == mCustomEllipsisSpan.getClass()) ?
           1 : 0;
       int minLen = spans1.length + spans2.length + offset;
-      T[] spans = ArrayUtils.newUnpaddedArray(type, minLen);
+      T[] spans = (T[]) Array.newInstance(type, minLen);
       if (spans.length > minLen) {
         spans = Arrays.copyOf(spans, minLen);
       }

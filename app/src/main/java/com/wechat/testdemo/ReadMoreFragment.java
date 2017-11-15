@@ -61,36 +61,6 @@ public class ReadMoreFragment extends Fragment {
   @NonNull
   private SpannableStringBuilder getSpannable() {
     SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder(getResources().getString(R.string.content_cn));
-    spannableStringBuilder.setSpan(new ClickableSpan() {
-      @Override
-      public void onClick(View widget) {
-        Toast.makeText(getActivity(), "test", Toast.LENGTH_LONG).show();
-      }
-
-      @Override
-      public void updateDrawState(TextPaint ds) {
-        super.updateDrawState(ds);
-//        ds.setStyle(Paint.Style.FILL_AND_STROKE);
-        ds.setColor(Color.RED);
-      }
-    }, 0, 10, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-    Drawable drawable = getResources().getDrawable(R.mipmap.ic_launcher);
-    drawable.setBounds(0, 0, 35, 35);
-
-    spannableStringBuilder.setSpan(new ImageSpan(drawable)
-        , 36, 37, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-
-    spannableStringBuilder.setSpan(new ImageSpan(drawable)
-        , 37, 38, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-
-    spannableStringBuilder.setSpan(new ImageSpan(drawable)
-        , 38, 39, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-
-    spannableStringBuilder.setSpan(new ImageSpan(drawable)
-        , 39, 40, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-//    ItalicReplacementSpan italicSpan = new ItalicReplacementSpan(-0.25f);
-//    StrokeSpan strokeSpan = new StrokeSpan(Color.BLUE, Color.YELLOW, 20);
-//    spannableStringBuilder.setSpan(strokeSpan, 0, spannableStringBuilder.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
     return spannableStringBuilder;
   }
 }

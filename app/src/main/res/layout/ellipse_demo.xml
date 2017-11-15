@@ -40,7 +40,6 @@
       android:background="#6600ffff"
       android:clickable="true"
       android:ellipsize="end"
-      android:gravity="center_vertical|left"
       android:maxLines="2"
       android:text="FastTextView"
       android:textSize="20sp"/>
