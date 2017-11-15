@@ -146,7 +146,8 @@ public class SingleLineTextView extends FastTextLayoutView {
   @Override
   protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
     if (mLayout == null && !TextUtils.isEmpty(mText)) {
-      BoringLayout.Metrics fm = BoringLayout.isBoring(mText, mTextPaint);
+      BoringLayout.Metrics fm = new BoringLayout.Metrics();
+      fm.width = (int) Layout.getDesiredWidth(mText, mTextPaint);
       mLayout = BoringLayout.make(mText, mTextPaint, MeasureSpec.getSize(widthMeasureSpec),
           TextViewAttrsHelper.getLayoutAlignment(this, getGravity()), mAttrsHelper.mSpacingMultiplier, mAttrsHelper.mSpacingAdd, fm, true);
     }
