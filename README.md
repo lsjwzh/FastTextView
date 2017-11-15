@@ -5,10 +5,13 @@ FastTextView use StaticLayout to render Spanned String,
 so it support most features of Android TextView.
 
 Inspired by :
+
 https://engineering.instagram.com/improving-comment-rendering-on-android-a77d5db3d82e
 
+http://ragnraok.github.io/textview-pre-render-research.html
+
 ## Features
-1.Faster measuring
+1.Faster than Android TextView
 
 2.More flexibility
 
@@ -18,6 +21,11 @@ https://engineering.instagram.com/improving-comment-rendering-on-android-a77d5db
 4.Correct Ellipsis handle with ImageSpan
 
 ![](ellipsis.png)
+
+5.Custom Read More Support
+
+![](readmore.gif)
+
 
 ## FastTextView vs Android TextView
 Rendering a SpannableString of 389 chars with ClickableSpan and ImageSpan.

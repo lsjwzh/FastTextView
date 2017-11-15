@@ -21,10 +21,17 @@ public class MainActivity extends FragmentActivity {
     fab.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
-        Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-            .setAction("Action", null).show();
+        getSupportFragmentManager().popBackStackImmediate();
       }
     });
+    getSupportFragmentManager().beginTransaction()
+        .replace(R.id.fragment, new MainActivityFragment())
+        .commit();
+  }
+
+  @Override
+  public void onBackPressed() {
+    super.onBackPressed();
   }
 
   @Override

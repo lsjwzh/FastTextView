@@ -25,7 +25,8 @@ public class MainActivityFragment extends Fragment {
       public void onClick(View v) {
         getFragmentManager().beginTransaction()
             .replace(R.id.fragment, new EllipseFragment())
-            .commitAllowingStateLoss();
+            .addToBackStack(null)
+            .commit();
       }
     });
     mRootView.findViewById(R.id.demo_ellipsis).setOnClickListener(new View.OnClickListener() {
@@ -33,6 +34,7 @@ public class MainActivityFragment extends Fragment {
       public void onClick(View v) {
         getFragmentManager().beginTransaction()
             .replace(R.id.fragment, new EllipseFragment())
+            .addToBackStack(null)
             .commitAllowingStateLoss();
       }
     });
@@ -40,7 +42,17 @@ public class MainActivityFragment extends Fragment {
       @Override
       public void onClick(View v) {
         getFragmentManager().beginTransaction()
-            .replace(R.id.fragment, new EllipseFragment())
+            .replace(R.id.fragment, new ReadMoreFragment())
+            .addToBackStack(null)
+            .commitAllowingStateLoss();
+      }
+    });
+    mRootView.findViewById(R.id.demo_layout_cache).setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        getFragmentManager().beginTransaction()
+            .replace(R.id.fragment, new LayoutCacheFragment())
+            .addToBackStack(null)
             .commitAllowingStateLoss();
       }
     });

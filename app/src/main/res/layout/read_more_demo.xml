@@ -16,34 +16,18 @@
     <TextView
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:text="Android TextView:"/>
+      android:text="ReadMoreTextView:"/>
 
-    <com.lsjwzh.test.TestTextView
-      android:id="@+id/system_tv"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:background="#6600ffff"
-      android:ellipsize="end"
-      android:maxLines="2"
-      android:textSize="20sp"/>
-
-
-    <TextView
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:text="FastTextView:"/>
-
-    <com.lsjwzh.test.FastTextView
-      android:id="@+id/fast_tv2"
+    <com.lsjwzh.widget.text.ReadMoreTextView
+      android:id="@+id/readmore_tv"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:background="#6600ffff"
       android:clickable="true"
       android:ellipsize="end"
-      android:gravity="center_vertical|left"
       android:maxLines="2"
-      android:text="FastTextView"
       android:textSize="20sp"/>
+
 
     <View
       android:layout_width="wrap_content"

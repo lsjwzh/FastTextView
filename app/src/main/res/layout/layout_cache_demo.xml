@@ -45,6 +45,46 @@
       android:text="FastTextView"
       android:textSize="20sp"/>
 
+    <TextView
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="ReadMoreTextView:"/>
+
+    <com.lsjwzh.widget.text.ReadMoreTextView
+      android:id="@+id/readmore_tv"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:background="#6600ffff"
+      android:clickable="true"
+      android:ellipsize="end"
+      android:maxLines="2"
+      android:textSize="20sp"/>
+
+    <TextView
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="FastTextLayoutView:"/>
+
+    <com.lsjwzh.test.FastTextLayoutView
+      android:id="@+id/fast_tv"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:background="#6600ffff"
+      android:clickable="true"/>
+
+    <TextView
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="SingleLineTextView:"/>
+
+    <com.lsjwzh.test.TestSingleLineTextView
+      android:id="@+id/single_line_tv"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:background="#6600ffff"
+      android:clickable="true"/>
+
+
     <View
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"/>

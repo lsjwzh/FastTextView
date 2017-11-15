@@ -31,4 +31,12 @@
     android:padding="10dp"
     android:textSize="30sp"
     android:text="Read More Demo"/>
+
+  <TextView
+    android:id="@+id/demo_layout_cache"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="10dp"
+    android:textSize="30sp"
+    android:text="Layout Cache Demo"/>
 </LinearLayout>
