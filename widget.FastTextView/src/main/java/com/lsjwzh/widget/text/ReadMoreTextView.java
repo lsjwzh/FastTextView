@@ -101,11 +101,12 @@ public class ReadMoreTextView extends FastTextView {
   protected StaticLayout makeLayout(CharSequence text, int maxWidth) {
     mWithEllipsisLayout = super.makeLayout(text, maxWidth);
     SpannableStringBuilder textWithExtraEnd = new SpannableStringBuilder(text);
+    textWithExtraEnd.append(COLLAPSE_NORMAL);
     if (mCollapseSpan != null) {
-      textWithExtraEnd.setSpan(mCollapseSpan, text.length() - 1, text.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+      textWithExtraEnd.setSpan(mCollapseSpan, textWithExtraEnd.length() - 1, textWithExtraEnd.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
     }
     StaticLayoutBuilderCompat layoutBuilder =
-        StaticLayoutBuilderCompat.obtain(textWithExtraEnd, 0, text.length(), getPaint(),
+        StaticLayoutBuilderCompat.obtain(textWithExtraEnd, 0, textWithExtraEnd.length(), getPaint(),
             maxWidth > 0 ? Math.min(maxWidth, mWithEllipsisLayout.getWidth()) : mWithEllipsisLayout.getWidth());
     layoutBuilder.setLineSpacing(mAttrsHelper.mSpacingAdd, mAttrsHelper.mSpacingMultiplier)
         .setAlignment(TextViewAttrsHelper.getLayoutAlignment(this, getGravity()))

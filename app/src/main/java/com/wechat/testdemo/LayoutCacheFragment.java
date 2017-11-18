@@ -32,6 +32,7 @@ import com.lsjwzh.widget.text.FastTextLayoutView;
 import com.lsjwzh.widget.text.FastTextView;
 import com.lsjwzh.widget.text.ReadMoreTextView;
 import com.lsjwzh.widget.text.StrokeSpan;
+import com.lsjwzh.widget.text.TextViewAttrsHelper;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -49,12 +50,13 @@ public class LayoutCacheFragment extends Fragment {
     mRootView = inflater.inflate(R.layout.layout_cache_demo, container, false);
     SpannableStringBuilder spannableStringBuilder = getSpannable();
 
-//    FastTextLayoutView fastTextLayoutView = (FastTextLayoutView) mRootView.findViewById(R.id.fast_tv);
-//    fastTextLayoutView.setTextLayout(layout);
-
-    FastTextView fastTextView = (FastTextView) mRootView.findViewById(R.id.fast_tv2);
-    fastTextView.setText(spannableStringBuilder);
-//    fastTextView.setCustomEllipsisSpan(new ImageSpan(drawable));
+    TextPaint textPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
+    float width = Layout.getDesiredWidth(spannableStringBuilder, textPaint);
+    StaticLayoutBuilderCompat layoutBuilder = StaticLayoutBuilderCompat.obtain(spannableStringBuilder,
+        0, spannableStringBuilder.length(), textPaint, (int) width);
+    layoutBuilder.setLineSpacing(0f, 1f).setIncludePad(true);
+    FastTextLayoutView fastTextLayoutView = (FastTextLayoutView) mRootView.findViewById(R.id.fast_tv);
+    fastTextLayoutView.setTextLayout(layoutBuilder.build());
 
     TextView tv = (TextView) mRootView.findViewById(R.id.system_tv);
     tv.setText(spannableStringBuilder);
