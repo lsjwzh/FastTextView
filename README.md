@@ -100,6 +100,15 @@ java code
     readMoreTextView.setCustomCollapseSpan(new ReadMoreTextView.EllipsisSpan("  Collapse"));
 ```
 
+# Build Project
+https://github.com/anggrayudi/android-hidden-api
+You should use 'android-hidden-api' to build project.
+
+1.Go to <SDK location>/platforms/.
+2.Copy, paste and replace the downloaded hidden API file into this directory, e.g. android-25/android.jar.
+3.Change compileSdkVersion and targetSdkVersion to 25 (for example).
+4.Finally, rebuild your project.
+
 # TODO List
 1.Layout Cache (For List Scene)
 
