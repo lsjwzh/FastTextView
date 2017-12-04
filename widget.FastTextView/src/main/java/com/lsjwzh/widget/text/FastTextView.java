@@ -1,6 +1,8 @@
 package com.lsjwzh.widget.text;
 
 import android.content.Context;
+import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.os.Build;
@@ -15,6 +17,7 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.StaticLayout;
 import android.text.StaticLayoutBuilderCompat;
+import android.text.TextLayoutCache;
 import android.text.TextPaint;
 import android.text.TextUtils;
 import android.text.style.ReplacementSpan;
@@ -32,6 +35,7 @@ public class FastTextView extends FastTextLayoutView {
   private CharSequence mText;
   private TextPaint mTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
   private ReplacementSpan mCustomEllipsisSpan;
+  private boolean mEnableLayoutCache = false; // experiment
   TextViewAttrsHelper mAttrsHelper = new TextViewAttrsHelper();
 
   public FastTextView(Context context) {
@@ -48,17 +52,24 @@ public class FastTextView extends FastTextLayoutView {
   }
 
   @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-  public FastTextView(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+  public FastTextView(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int
+      defStyleRes) {
     super(context, attrs, defStyleAttr, defStyleRes);
     init(context, attrs, defStyleAttr, defStyleRes);
   }
 
-  private void init(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+  private void init(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int
+      defStyleRes) {
     mAttrsHelper.init(context, attrs, defStyleAttr, defStyleRes);
     setText(mAttrsHelper.mText);
     TextPaint textPaint = getTextPaint();
     textPaint.setColor(mAttrsHelper.mTextColor);
     textPaint.setTextSize(mAttrsHelper.mTextSize);
+    final Resources.Theme theme = context.getTheme();
+    TypedArray a = theme.obtainStyledAttributes(attrs, R.styleable.FastTextView, defStyleAttr,
+        defStyleRes);
+    mEnableLayoutCache = a.getBoolean(R.styleable.FastTextView_enableLayoutCache, false);
+    a.recycle();
   }
 
   @Override
@@ -102,12 +113,22 @@ public class FastTextView extends FastTextLayoutView {
     if (!TextUtils.isEmpty(mText) && width > 0 &&
         (mLayout == null || width < mLayout.getWidth()
             || (width > mLayout.getWidth() && mLayout.getLineCount() > 1))) {
-      mLayout = makeLayout(mText, width);
+      if (mEnableLayoutCache) {
+        mLayout = TextLayoutCache.STATIC_LAYOUT_CACHE.get(mText);
+        if (mLayout == null) {
+          mLayout = makeLayout(mText, width);
+          TextLayoutCache.STATIC_LAYOUT_CACHE.put(mText, (StaticLayout) mLayout);
+        }
+      } else {
+        mLayout = makeLayout(mText, width);
+      }
     }
     if (Build.VERSION.SDK_INT <= 19 && mLayout != null) {
       // when <= api 19, maxLines can not be supported well.
-      int height = mAttrsHelper.mMaxLines < mLayout.getLineCount() ? mLayout.getLineTop(mAttrsHelper.mMaxLines) : mLayout.getHeight();
-      setMeasuredDimension(getMeasuredWidth(getPaddingLeft() + getPaddingRight() + mLayout.getWidth(), widthMeasureSpec),
+      int height = mAttrsHelper.mMaxLines < mLayout.getLineCount() ? mLayout.getLineTop
+          (mAttrsHelper.mMaxLines) : mLayout.getHeight();
+      setMeasuredDimension(getMeasuredWidth(getPaddingLeft() + getPaddingRight() + mLayout
+              .getWidth(), widthMeasureSpec),
           getMeasuredHeight(getPaddingTop() + getPaddingBottom() + height, heightMeasureSpec));
     } else {
       super.onMeasure(widthMeasureSpec, heightMeasureSpec);
@@ -180,7 +201,7 @@ public class FastTextView extends FastTextLayoutView {
 
   public void setText(@android.annotation.NonNull CharSequence text) {
     if (mText != text) {
-      setTextLayout(null);
+      clearTextLayout(false);
     }
     mText = text;
   }
@@ -198,8 +219,21 @@ public class FastTextView extends FastTextLayoutView {
    */
   public void setGravity(int gravity) {
     if (mAttrsHelper.setGravity(gravity)) {
-      setTextLayout(null);
+      clearTextLayout();
     }
+  }
+
+  private void clearTextLayout() {
+    clearTextLayout(false);
+  }
+
+  private void clearTextLayout(boolean cleanCache) {
+    if (mEnableLayoutCache && cleanCache) {
+      TextLayoutCache.STATIC_LAYOUT_CACHE.remove(mText);
+    }
+    setTextLayout(null);
+    requestLayout();
+    invalidate();
   }
 
   /**
@@ -214,7 +248,7 @@ public class FastTextView extends FastTextLayoutView {
   public void setMaxWidth(int width) {
     if (mAttrsHelper.mMaxWidth != width) {
       mAttrsHelper.mMaxWidth = width;
-      setTextLayout(null);
+      clearTextLayout();
     }
   }
 
@@ -225,7 +259,7 @@ public class FastTextView extends FastTextLayoutView {
   public void setMaxLines(int maxLines) {
     if (mAttrsHelper.mMaxLines != maxLines) {
       mAttrsHelper.mMaxLines = maxLines;
-      setTextLayout(null);
+      clearTextLayout();
     }
   }
 
@@ -247,8 +281,10 @@ public class FastTextView extends FastTextLayoutView {
   public void setTextSize(float textSize, int unit) {
     float rawTextSize = TypedValue.applyDimension(
         unit, textSize, getResources().getDisplayMetrics());
-    mTextPaint.setTextSize(rawTextSize);
-    setTextLayout(null);
+    if (rawTextSize != mTextPaint.getTextSize()) {
+      mTextPaint.setTextSize(rawTextSize);
+      clearTextLayout();
+    }
   }
 
   public float getTextSize() {
@@ -262,7 +298,7 @@ public class FastTextView extends FastTextLayoutView {
   public void setEllipsize(int ellipsize) {
     if (mAttrsHelper.mEllipsize != ellipsize) {
       mAttrsHelper.mEllipsize = ellipsize;
-      setTextLayout(null);
+      clearTextLayout();
     }
   }
 
@@ -284,7 +320,8 @@ public class FastTextView extends FastTextLayoutView {
     }
 
     int layoutTargetWidth = maxWidth > 0 ? Math.min(maxWidth, width) : width;
-    StaticLayoutBuilderCompat layoutBuilder = StaticLayoutBuilderCompat.obtain(text, 0, text.length(), mTextPaint, layoutTargetWidth);
+    StaticLayoutBuilderCompat layoutBuilder = StaticLayoutBuilderCompat.obtain(text, 0, text
+        .length(), mTextPaint, layoutTargetWidth);
     layoutBuilder.setLineSpacing(mAttrsHelper.mSpacingAdd, mAttrsHelper.mSpacingMultiplier)
         .setMaxLines(mAttrsHelper.mMaxLines)
         .setAlignment(TextViewAttrsHelper.getLayoutAlignment(this, getGravity()))
@@ -294,18 +331,22 @@ public class FastTextView extends FastTextLayoutView {
       layoutBuilder.setEllipsize(truncateAt);
       if (width > layoutTargetWidth) {
         EllipsisSpannedContainer ellipsisSpanned =
-            new EllipsisSpannedContainer(text instanceof Spanned ? (Spanned) text : new SpannableString(text));
+            new EllipsisSpannedContainer(text instanceof Spanned ? (Spanned) text : new
+                SpannableString(text));
         ellipsisSpanned.setCustomEllipsisSpan(mCustomEllipsisSpan);
         layoutBuilder.setText(ellipsisSpanned);
         int ellipsisWithOffset = (int) mTextPaint.measureText(ReadMoreTextView.ELLIPSIS_NORMAL) - 2;
         // when StaticLayout call calculateEllipsis,
         // textWidth <= avail will cause do nothing so we should make it different with textWidth
         if (mCustomEllipsisSpan != null) {
-          layoutBuilder.setEllipsizedWidth(layoutTargetWidth - mCustomEllipsisSpan.getSize(getPaint(), mText, 0, mText.length(), null) + ellipsisWithOffset);
+          layoutBuilder.setEllipsizedWidth(layoutTargetWidth - mCustomEllipsisSpan.getSize
+              (getPaint(), mText, 0, mText.length(), null) + ellipsisWithOffset);
         } else if (Build.VERSION.SDK_INT <= 19) {
-          ReadMoreTextView.EllipsisSpan ellipsisSpan = new ReadMoreTextView.EllipsisSpan(ReadMoreTextView.ELLIPSIS_NORMAL);
+          ReadMoreTextView.EllipsisSpan ellipsisSpan = new ReadMoreTextView.EllipsisSpan
+              (ReadMoreTextView.ELLIPSIS_NORMAL);
           ellipsisSpanned.setCustomEllipsisSpan(ellipsisSpan);
-          layoutBuilder.setEllipsizedWidth(layoutTargetWidth - ellipsisSpan.getSize(getPaint(), mText, 0, mText.length(), null) + ellipsisWithOffset);
+          layoutBuilder.setEllipsizedWidth(layoutTargetWidth - ellipsisSpan.getSize(getPaint(),
+              mText, 0, mText.length(), null) + ellipsisWithOffset);
         } else {
           layoutBuilder.setEllipsizedWidth(layoutTargetWidth);
         }

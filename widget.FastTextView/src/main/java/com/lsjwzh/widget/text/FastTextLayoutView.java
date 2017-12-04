@@ -81,7 +81,6 @@ public class FastTextLayoutView extends View {
 
   public void setTextLayout(Layout layout) {
     mLayout = layout;
-    requestLayout();
   }
 
   public Layout getTextLayout() {
