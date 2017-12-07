@@ -33,10 +33,35 @@
     android:text="Read More Demo"/>
 
   <TextView
+    android:id="@+id/prepare_layout_cache"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="10dp"
+    android:textSize="30sp"
+    android:text="Prepare Cache"/>
+
+  <TextView
     android:id="@+id/demo_layout_cache"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="10dp"
     android:textSize="30sp"
     android:text="Layout Cache Demo"/>
+
+  <TextView
+    android:id="@+id/demo_fast_tv"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="10dp"
+    android:textSize="30sp"
+    android:text="FastTextView With Cache Layout"/>
+
+  <TextView
+    android:id="@+id/demo_normal_list"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="10dp"
+    android:textSize="30sp"
+    android:text="Normal List Demo"/>
+
 </LinearLayout>

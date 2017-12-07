@@ -14,6 +14,9 @@ import android.widget.TextView;
 
 public class TestTextView extends TextView {
   private static final String TAG = TestTextView.class.getSimpleName();
+  public static volatile long sDrawCost = 0;
+  public static volatile long sDrawCount = 0;
+  public static volatile long sMeasureCost = 0;
 
   public TestTextView(Context context) {
     super(context);
@@ -34,7 +37,8 @@ public class TestTextView extends TextView {
       super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
     long end = SystemClock.elapsedRealtime();
-    Log.d(TAG, TAG + " onMeasure cost:" + (end - start));
+    sMeasureCost += (end - start);
+//    Log.d(TAG, TAG + " onMeasure cost:" + (end - start));
 
   }
 
@@ -45,6 +49,8 @@ public class TestTextView extends TextView {
       super.onDraw(canvas);
     }
     long end = SystemClock.elapsedRealtime();
-    Log.d(TAG, TAG + " onDraw cost:" + (end - start));
+    sDrawCost += (end - start);
+    sDrawCount++;
+//    Log.d(TAG, TAG + " onDraw cost:" + (end - start));
   }
 }

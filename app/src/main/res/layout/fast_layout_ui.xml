@@ -1,0 +1,33 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+  <LinearLayout
+    android:id="@+id/op_layout"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:layout_alignParentTop="true"
+    android:layout_centerHorizontal="true"
+    android:gravity="center">
+
+    <Button
+      android:id="@+id/scroll_down_button"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="ScrollDown"
+      />
+
+    <Button
+      android:id="@+id/scroll_up_button"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="ScrollUp"/>
+  </LinearLayout>
+
+  <ListView
+    android:id="@+id/test_list"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@id/op_layout"/>
+
+</RelativeLayout>

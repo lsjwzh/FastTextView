@@ -3,6 +3,7 @@ package com.lsjwzh.test;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.os.Build;
+import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
@@ -13,7 +14,10 @@ import android.util.Log;
  */
 public class FastTextLayoutView extends com.lsjwzh.widget.text.ClickableSpanLayoutView {
   private static final String TAG = FastTextLayoutView.class.getSimpleName();
-  private boolean mIsDebug = true;
+  private boolean mIsDebug = false;
+  public static volatile long sDrawCost = 0;
+  public static volatile long sDrawCount = 0;
+  public static volatile long sMeasureCost = 0;
 
   public FastTextLayoutView(Context context) {
     super(context);
@@ -34,12 +38,14 @@ public class FastTextLayoutView extends com.lsjwzh.widget.text.ClickableSpanLayo
 
   @Override
   protected void onDraw(Canvas canvas) {
-    long start = System.currentTimeMillis();
+    long start = SystemClock.elapsedRealtime();
     for (int i = 0; i < Const.LOOP_COUNT; i++) {
       // TODO for test
       super.onDraw(canvas);
     }
-    long end = System.currentTimeMillis();
+    long end = SystemClock.elapsedRealtime();
+    sDrawCost += (end - start);
+    sDrawCount++;
     if (mIsDebug) {
       Log.d(TAG, TAG + " onDraw cost:" + (end - start));
     }
@@ -47,12 +53,13 @@ public class FastTextLayoutView extends com.lsjwzh.widget.text.ClickableSpanLayo
 
   @Override
   protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-    long start = System.currentTimeMillis();
+    long start = SystemClock.elapsedRealtime();
     for (int i = 0; i < Const.LOOP_COUNT; i++) {
       // TODO for test
       super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
-    long end = System.currentTimeMillis();
+    long end = SystemClock.elapsedRealtime();
+    sMeasureCost += (end - start);
     if (mIsDebug) {
       Log.d(TAG, TAG + " onMeasure cost:" + (end - start));
     }

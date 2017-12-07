@@ -8,6 +8,9 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.lsjwzh.test.FpsCalculator;
+import com.lsjwzh.test.GhostThread;
+
 public class MainActivity extends FragmentActivity {
 
   @Override
@@ -27,6 +30,9 @@ public class MainActivity extends FragmentActivity {
     getSupportFragmentManager().beginTransaction()
         .replace(R.id.fragment, new MainActivityFragment())
         .commit();
+
+//    GhostThread.start();
+    FpsCalculator.instance().start();
   }
 
   @Override
@@ -54,5 +60,12 @@ public class MainActivity extends FragmentActivity {
     }
 
     return super.onOptionsItemSelected(item);
+  }
+
+  @Override
+  protected void onDestroy() {
+    super.onDestroy();
+    FpsCalculator.instance().stop();
+    GhostThread.stop();
   }
 }
