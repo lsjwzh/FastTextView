@@ -4,8 +4,8 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
+import android.support.annotation.Px;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.widget.TextView;
 
 /**
@@ -14,9 +14,7 @@ import android.widget.TextView;
 
 public class TestTextView extends TextView {
   private static final String TAG = TestTextView.class.getSimpleName();
-  public static volatile long sDrawCost = 0;
-  public static volatile long sDrawCount = 0;
-  public static volatile long sMeasureCost = 0;
+  public static final TestStats TEST_STATS = new TestStats();
 
   public TestTextView(Context context) {
     super(context);
@@ -32,25 +30,30 @@ public class TestTextView extends TextView {
 
   @Override
   protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-    long start = SystemClock.elapsedRealtime();
+    TEST_STATS.measuretart();
     for (int i = 0; i < Const.LOOP_COUNT; i++) {
       super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
-    long end = SystemClock.elapsedRealtime();
-    sMeasureCost += (end - start);
-//    Log.d(TAG, TAG + " onMeasure cost:" + (end - start));
-
+    TEST_STATS.measureEnd();
   }
 
   @Override
   protected void onDraw(Canvas canvas) {
-    long start = SystemClock.elapsedRealtime();
+    TEST_STATS.drawStart();
     for (int i = 0; i < Const.LOOP_COUNT; i++) {
       super.onDraw(canvas);
     }
-    long end = SystemClock.elapsedRealtime();
-    sDrawCost += (end - start);
-    sDrawCount++;
+    TEST_STATS.drawEnd();
 //    Log.d(TAG, TAG + " onDraw cost:" + (end - start));
+  }
+
+  @Override
+  public void layout(@Px int l, @Px int t, @Px int r, @Px int b) {
+    TEST_STATS.layoutStart();
+    for (int i = 0; i < Const.LOOP_COUNT; i++) {
+      // TODO for test
+      super.layout(l, t, r, b);
+    }
+    TEST_STATS.layoutEnd();
   }
 }

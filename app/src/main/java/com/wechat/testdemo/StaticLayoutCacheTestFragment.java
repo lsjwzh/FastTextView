@@ -2,14 +2,12 @@ package com.wechat.testdemo;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -44,21 +42,15 @@ public class StaticLayoutCacheTestFragment extends Fragment {
     viewRoot.findViewById(R.id.scroll_down_button).setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
-        com.lsjwzh.test.FastTextLayoutView.sMeasureCost = 0;
-        com.lsjwzh.test.FastTextLayoutView.sDrawCost = 0;
-        com.lsjwzh.test.FastTextLayoutView.sDrawCount = 0;
+        com.lsjwzh.test.FastTextLayoutView.TEST_STATS.reset();
         autoScrollHandler.startAutoScrollDown(new AutoScrollHandler.Callback() {
           @Override
           public void callback(int avgFps) {
             Toast.makeText(getActivity(), "Average FPS: " + avgFps, Toast.LENGTH_LONG).show();
             Log.e("drawFps", "FastTextLayoutView.avgFps" + avgFps);
-            Log.e("drawCost", "FastTextLayoutView.sDrawCost" + com.lsjwzh.test.FastTextLayoutView
-                .sDrawCost);
-            Log.e("MeasureCost", "FastTextLayoutView.sMeasureCost" + com.lsjwzh.test
-                .FastTextLayoutView.sMeasureCost);
-            Log.e("drawCount", "FastTextLayoutView.sDrawCount" + com.lsjwzh.test
-                .FastTextLayoutView.sDrawCount);
             Log.e("bindCost", "bindCost" + adapter.bindCost);
+            Log.e("FastTextLayoutViewStats", com.lsjwzh.test.FastTextLayoutView.TEST_STATS
+                .toString());
           }
         });
       }
@@ -67,21 +59,15 @@ public class StaticLayoutCacheTestFragment extends Fragment {
     viewRoot.findViewById(R.id.scroll_up_button).setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
-        com.lsjwzh.test.FastTextLayoutView.sMeasureCost = 0;
-        com.lsjwzh.test.FastTextLayoutView.sDrawCost = 0;
-        com.lsjwzh.test.FastTextLayoutView.sDrawCount = 0;
+        com.lsjwzh.test.FastTextLayoutView.TEST_STATS.reset();
         autoScrollHandler.startAutoScrollUp(new AutoScrollHandler.Callback() {
           @Override
           public void callback(int avgFps) {
             Toast.makeText(getActivity(), "Average FPS: " + avgFps, Toast.LENGTH_LONG).show();
             Log.e("drawFps", "FastTextLayoutView.avgFps" + avgFps);
-            Log.e("drawCost", "FastTextLayoutView.sDrawCost" + com.lsjwzh.test.FastTextLayoutView
-                .sDrawCost);
-            Log.e("MeasureCost", "FastTextLayoutView.sMeasureCost" + com.lsjwzh.test
-                .FastTextLayoutView.sMeasureCost);
-            Log.e("drawCount", "FastTextLayoutView.sDrawCount" + com.lsjwzh.test
-                .FastTextLayoutView.sDrawCount);
             Log.e("bindCost", "bindCost" + adapter.bindCost);
+            Log.e("FastTextLayoutViewStats", com.lsjwzh.test.FastTextLayoutView.TEST_STATS
+                .toString());
           }
         });
       }

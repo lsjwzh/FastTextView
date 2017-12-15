@@ -46,19 +46,15 @@ public class FastTextViewListTestFragment extends Fragment {
     viewRoot.findViewById(R.id.scroll_down_button).setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
-        FastTextView.sMeasureCost = 0;
-        FastTextView.sDrawCost = 0;
-        FastTextView.sDrawCount = 0;
+        FastTextView.TEST_STATS.reset();
+        adapter.bindCost = 0;
         autoScrollHandler.startAutoScrollDown(new AutoScrollHandler.Callback() {
           @Override
           public void callback(int fps) {
             Toast.makeText(listView.getContext(), "Average FPS: " + fps, Toast.LENGTH_LONG).show();
             Log.e("drawFps", "TestFastTextView.avgFps" + fps);
-            Log.e("drawCost", "TestFastTextView.sDrawCost" + FastTextView.sDrawCost);
-            Log.e("MeasureCost", "TestFastTextView.sMeasureCost" + FastTextView
-                .sMeasureCost);
-            Log.e("drawCount", "TestFastTextView.sDrawCount" + FastTextView.sDrawCount);
             Log.e("bindCost", "bindCost" + adapter.bindCost);
+            Log.e("TestFastTextViewStats", FastTextView.TEST_STATS.toString());
           }
         });
       }
@@ -67,19 +63,15 @@ public class FastTextViewListTestFragment extends Fragment {
     viewRoot.findViewById(R.id.scroll_up_button).setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
-        FastTextView.sMeasureCost = 0;
-        FastTextView.sDrawCost = 0;
-        FastTextView.sDrawCount = 0;
+        FastTextView.TEST_STATS.reset();
+        adapter.bindCost = 0;
         autoScrollHandler.startAutoScrollUp(new AutoScrollHandler.Callback() {
           @Override
           public void callback(int fps) {
             Toast.makeText(listView.getContext(), "Average FPS: " + fps, Toast.LENGTH_LONG).show();
             Log.e("drawFps", "TestFastTextView.avgFps" + fps);
-            Log.e("drawCost", "TestFastTextView.sDrawCost" + FastTextView.sDrawCost);
-            Log.e("MeasureCost", "TestFastTextView.sMeasureCost" + FastTextView
-                .sMeasureCost);
-            Log.e("drawCount", "TestFastTextView.sDrawCount" + FastTextView.sDrawCount);
             Log.e("bindCost", "bindCost" + adapter.bindCost);
+            Log.e("TestFastTextViewStats", FastTextView.TEST_STATS.toString());
           }
         });
       }

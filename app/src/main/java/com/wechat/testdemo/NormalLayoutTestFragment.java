@@ -17,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.lsjwzh.test.AutoScrollHandler;
+import com.lsjwzh.test.FastTextView;
 import com.lsjwzh.test.TestSpan;
 import com.lsjwzh.test.TestTextView;
 import com.lsjwzh.test.Util;
@@ -47,20 +48,15 @@ public class NormalLayoutTestFragment extends Fragment {
     viewRoot.findViewById(R.id.scroll_down_button).setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
-        TestTextView.sMeasureCost = 0;
-        TestTextView.sDrawCost = 0;
-        TestTextView.sDrawCount = 0;
+        TestTextView.TEST_STATS.reset();
         adapter.bindCost = 0;
         autoScrollHandler.startAutoScrollDown(new AutoScrollHandler.Callback() {
           @Override
           public void callback(int fps) {
             Toast.makeText(listView.getContext(), "Average FPS: " + fps, Toast.LENGTH_LONG).show();
             Log.e("drawFps", "TestTextView.avgFps" + fps);
-            Log.e("drawCost", "TestTextView.sDrawCost" + com.lsjwzh.test.TestTextView.sDrawCost);
-            Log.e("MeasureCost", "TestTextView.sMeasureCost" + com.lsjwzh.test.TestTextView
-                .sMeasureCost);
-            Log.e("drawCount", "TestTextView.sDrawCount" + com.lsjwzh.test.TestTextView.sDrawCount);
             Log.e("bindCost", "bindCost" + adapter.bindCost);
+            Log.e("TestTextViewStats", TestTextView.TEST_STATS.toString());
           }
         });
       }
@@ -69,20 +65,16 @@ public class NormalLayoutTestFragment extends Fragment {
     viewRoot.findViewById(R.id.scroll_up_button).setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
-        TestTextView.sMeasureCost = 0;
-        TestTextView.sDrawCost = 0;
-        TestTextView.sDrawCount = 0;
+        TestTextView.TEST_STATS.reset();
         adapter.bindCost = 0;
         autoScrollHandler.startAutoScrollUp(new AutoScrollHandler.Callback() {
           @Override
           public void callback(int fps) {
             Toast.makeText(listView.getContext(), "Average FPS: " + fps, Toast.LENGTH_LONG).show();
             Log.e("drawFps", "TestTextView.avgFps" + fps);
-            Log.e("drawCost", "TestTextView.sDrawCost" + com.lsjwzh.test.TestTextView.sDrawCost);
-            Log.e("MeasureCost", "TestTextView.sMeasureCost" + com.lsjwzh.test.TestTextView
-                .sMeasureCost);
-            Log.e("drawCount", "TestTextView.sDrawCount" + com.lsjwzh.test.TestTextView.sDrawCount);
             Log.e("bindCost", "bindCost" + adapter.bindCost);
+            Log.e("TestTextViewStats", TestTextView.TEST_STATS.toString());
+
           }
         });
       }
