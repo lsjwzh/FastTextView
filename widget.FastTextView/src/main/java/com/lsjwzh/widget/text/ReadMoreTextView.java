@@ -53,7 +53,8 @@ public class ReadMoreTextView extends FastTextView {
   protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
     long start = System.currentTimeMillis();
     int width = MeasureSpec.getSize(widthMeasureSpec);
-    if (MeasureSpec.getMode(widthMeasureSpec) != MeasureSpec.EXACTLY) {
+    boolean exactly = MeasureSpec.getMode(widthMeasureSpec) == MeasureSpec.EXACTLY;
+    if (!exactly) {
       if (mAttrsHelper.mMaxWidth != Integer.MAX_VALUE && width > mAttrsHelper.mMaxWidth) {
         width = mAttrsHelper.mMaxWidth;
       }
@@ -61,7 +62,7 @@ public class ReadMoreTextView extends FastTextView {
     if (!TextUtils.isEmpty(getText()) && width > 0 &&
         (mLayout == null || width < mLayout.getWidth()
             || (width > mLayout.getWidth() && mLayout.getLineCount() > 1))) {
-      mLayout = makeLayout(getText(), width);
+      mLayout = makeLayout(getText(), width, exactly);
     }
     if (mWithEllipsisLayout != null && !mIsShowAll) {
       setMeasuredDimension(getMeasuredWidth(getPaddingLeft() + getPaddingRight() + mWithEllipsisLayout.getWidth(), widthMeasureSpec),
@@ -98,8 +99,8 @@ public class ReadMoreTextView extends FastTextView {
 
   @NonNull
   @Override
-  protected StaticLayout makeLayout(CharSequence text, int maxWidth) {
-    mWithEllipsisLayout = super.makeLayout(text, maxWidth);
+  protected StaticLayout makeLayout(CharSequence text, int maxWidth, boolean exactly) {
+    mWithEllipsisLayout = super.makeLayout(text, maxWidth, exactly);
     SpannableStringBuilder textWithExtraEnd = new SpannableStringBuilder(text);
     textWithExtraEnd.append(COLLAPSE_NORMAL);
     if (mCollapseSpan != null) {

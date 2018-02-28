@@ -105,7 +105,8 @@ public class FastTextView extends FastTextLayoutView {
   protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
     long start = System.currentTimeMillis();
     int width = MeasureSpec.getSize(widthMeasureSpec);
-    if (MeasureSpec.getMode(widthMeasureSpec) != MeasureSpec.EXACTLY) {
+    boolean exactly = MeasureSpec.getMode(widthMeasureSpec) == MeasureSpec.EXACTLY;
+    if (!exactly) {
       if (mAttrsHelper.mMaxWidth != Integer.MAX_VALUE && width > mAttrsHelper.mMaxWidth) {
         width = mAttrsHelper.mMaxWidth;
       }
@@ -116,11 +117,11 @@ public class FastTextView extends FastTextLayoutView {
       if (mEnableLayoutCache) {
         mLayout = TextLayoutCache.STATIC_LAYOUT_CACHE.get(mText);
         if (mLayout == null) {
-          mLayout = makeLayout(mText, width);
+          mLayout = makeLayout(mText, width, exactly);
           TextLayoutCache.STATIC_LAYOUT_CACHE.put(mText, (StaticLayout) mLayout);
         }
       } else {
-        mLayout = makeLayout(mText, width);
+        mLayout = makeLayout(mText, width, exactly);
       }
     }
     if (Build.VERSION.SDK_INT <= 19 && mLayout != null) {
@@ -311,25 +312,27 @@ public class FastTextView extends FastTextLayoutView {
   }
 
   @NonNull
-  protected StaticLayout makeLayout(CharSequence text, int maxWidth) {
-    int width;
-    if (text instanceof Spanned) {
-      width = (int) Math.ceil(Layout.getDesiredWidth(text, mTextPaint));
-    } else {
-      width = (int) Math.ceil(mTextPaint.measureText(text, 0, text.length()));
+  protected StaticLayout makeLayout(CharSequence text, int maxWidth, boolean exactly) {
+    TextUtils.TruncateAt truncateAt = getTruncateAt();
+    int layoutTargetWidth = maxWidth;
+    int contentWidth = maxWidth;
+    if (!exactly || truncateAt != null) {
+      contentWidth = getContentWidth(text);
+    }
+    if (!exactly) {
+      layoutTargetWidth = maxWidth > 0 ? Math.min(maxWidth, contentWidth) : contentWidth;
     }
 
-    int layoutTargetWidth = maxWidth > 0 ? Math.min(maxWidth, width) : width;
+
     StaticLayoutBuilderCompat layoutBuilder = StaticLayoutBuilderCompat.obtain(text, 0, text
         .length(), mTextPaint, layoutTargetWidth);
     layoutBuilder.setLineSpacing(mAttrsHelper.mSpacingAdd, mAttrsHelper.mSpacingMultiplier)
         .setMaxLines(mAttrsHelper.mMaxLines)
         .setAlignment(TextViewAttrsHelper.getLayoutAlignment(this, getGravity()))
         .setIncludePad(true);
-    TextUtils.TruncateAt truncateAt = getTruncateAt();
     if (truncateAt != null) {
       layoutBuilder.setEllipsize(truncateAt);
-      if (width > layoutTargetWidth) {
+      if (contentWidth > layoutTargetWidth) {
         EllipsisSpannedContainer ellipsisSpanned =
             new EllipsisSpannedContainer(text instanceof Spanned ? (Spanned) text : new
                 SpannableString(text));
@@ -370,6 +373,16 @@ public class FastTextView extends FastTextLayoutView {
       }
     }
     return layoutBuilder.build();
+  }
+
+  protected int getContentWidth(CharSequence text) {
+    int contentWidth;
+    if (text instanceof Spanned) {
+      contentWidth = (int) Math.ceil(Layout.getDesiredWidth(text, mTextPaint));
+    } else {
+      contentWidth = (int) Math.ceil(mTextPaint.measureText(text, 0, text.length()));
+    }
+    return contentWidth;
   }
 
   protected TextUtils.TruncateAt getTruncateAt() {
