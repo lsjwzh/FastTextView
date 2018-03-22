@@ -1,1 +1,1 @@
-include ':app', ':widget.FastTextView'
+include ':app', ':widget.FastTextView', ':text.Textline'

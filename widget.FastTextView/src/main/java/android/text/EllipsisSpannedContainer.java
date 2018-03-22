@@ -2,9 +2,6 @@ package android.text;
 
 import android.text.style.ReplacementSpan;
 
-import com.android.internal.util.ArrayUtils;
-import com.lsjwzh.widget.text.ReadMoreTextView;
-
 import java.lang.reflect.Array;
 import java.util.Arrays;
 
