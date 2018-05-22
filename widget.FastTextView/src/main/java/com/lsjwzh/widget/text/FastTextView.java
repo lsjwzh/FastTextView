@@ -332,7 +332,7 @@ public class FastTextView extends FastTextLayoutView {
         .setIncludePad(true);
     if (truncateAt != null) {
       layoutBuilder.setEllipsize(truncateAt);
-      if (contentWidth > layoutTargetWidth) {
+      if (contentWidth > layoutTargetWidth * mAttrsHelper.mMaxLines) {
         EllipsisSpannedContainer ellipsisSpanned =
             new EllipsisSpannedContainer(text instanceof Spanned ? (Spanned) text : new
                 SpannableString(text));

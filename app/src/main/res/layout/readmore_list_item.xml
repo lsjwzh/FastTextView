@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.lsjwzh.widget.text.ReadMoreTextView
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/fast_text_view"
+	android:textSize="25sp"
+	android:ellipsize="end"
+	android:maxLines="2"
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content"/>

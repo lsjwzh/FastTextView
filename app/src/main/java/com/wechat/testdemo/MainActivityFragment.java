@@ -58,6 +58,15 @@ public class MainActivityFragment extends Fragment {
             .commitAllowingStateLoss();
       }
     });
+    mRootView.findViewById(R.id.demo_read_more_list).setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        getFragmentManager().beginTransaction()
+            .replace(R.id.fragment, new ReadMoreListTestFragment())
+            .addToBackStack(null)
+            .commitAllowingStateLoss();
+      }
+    });
 
     mRootView.findViewById(R.id.prepare_layout_cache).setOnClickListener(new View.OnClickListener
         () {

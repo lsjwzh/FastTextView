@@ -33,6 +33,15 @@
     android:text="Read More Demo"/>
 
   <TextView
+    android:id="@+id/demo_read_more_list"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="10dp"
+    android:textSize="30sp"
+    android:text="Read More List Demo"/>
+
+
+  <TextView
     android:id="@+id/prepare_layout_cache"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"

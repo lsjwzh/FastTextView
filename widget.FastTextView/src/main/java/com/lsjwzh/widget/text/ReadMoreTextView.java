@@ -48,6 +48,15 @@ public class ReadMoreTextView extends FastTextView {
     setCustomEllipsisSpan(new EllipsisSpan(ELLIPSIS_NORMAL));
   }
 
+  @Override
+  public void setText(CharSequence text) {
+    if (text != getText()) {
+      mIsShowAll = false;
+      mWithEllipsisLayout = null;
+      mAllTextLayout = null;
+    }
+    super.setText(text);
+  }
 
   @Override
   protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
