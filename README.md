@@ -52,7 +52,7 @@ repositories {
 
 dependencies {
     ...
-    compile 'com.lsjwzh.widget:FastTextView:1.2.0'
+    compile 'com.lsjwzh.widget:FastTextView:1.2.2'
     ...
 }
 ```
