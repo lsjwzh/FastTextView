@@ -105,8 +105,8 @@ public class EllipsisSpannedContainer implements Spanned, GetChars{
 
   @Override
   public void getChars(int start, int end, char[] dest, int destoff) {
+    TextUtils.getChars(mSourceSpanned, start, end, dest, destoff);
     if (mLayout != null) {
-      TextUtils.getChars(mSourceSpanned, start, end, dest, destoff);
       int line1 = mLayout.getLineForOffset(start);
       int line2 = mLayout.getLineForOffset(end);
 
