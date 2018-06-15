@@ -74,9 +74,11 @@ public class ReadMoreTextView extends FastTextView {
       mLayout = makeLayout(getText(), width, exactly);
     }
     if (mWithEllipsisLayout != null && !mIsShowAll) {
+      mLayout = mWithEllipsisLayout;
       setMeasuredDimension(getMeasuredWidth(getPaddingLeft() + getPaddingRight() + mWithEllipsisLayout.getWidth(), widthMeasureSpec),
           getMeasuredHeight(getPaddingTop() + getPaddingBottom() + mWithEllipsisLayout.getHeight(), heightMeasureSpec));
     } else if (mAllTextLayout != null && mIsShowAll) {
+      mLayout = mAllTextLayout;
       setMeasuredDimension(getMeasuredWidth(getPaddingLeft() + getPaddingRight() + mAllTextLayout.getWidth(), widthMeasureSpec),
           getMeasuredHeight(getPaddingTop() + getPaddingBottom() + mAllTextLayout.getHeight(), heightMeasureSpec));
     } else {

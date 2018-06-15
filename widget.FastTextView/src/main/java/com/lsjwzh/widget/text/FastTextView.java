@@ -353,23 +353,9 @@ public class FastTextView extends FastTextLayoutView {
         } else {
           layoutBuilder.setEllipsizedWidth(layoutTargetWidth);
         }
-        StaticLayout staticLayout = layoutBuilder.build();
-        int lineCount = Math.min(staticLayout.getLineCount(), mAttrsHelper.mMaxLines);
-        if (lineCount > 0) {
-          int beforeLastLine = 0;
-          for (int i = 0; i < lineCount - 1; i++) {
-            beforeLastLine += staticLayout.getLineVisibleEnd(i);
-          }
-          int ellipsisCount = staticLayout.getEllipsisCount(lineCount - 1);
-          int ellipsisStart = staticLayout.getEllipsisStart(lineCount - 1);
-          int start = beforeLastLine + ellipsisStart;
-          if (truncateAt == TextUtils.TruncateAt.END) {
-            ellipsisSpanned.setEllipsisRange(start, ellipsisSpanned.length());
-          } else {
-            ellipsisSpanned.setEllipsisRange(start, start + ellipsisCount);
-          }
-        }
-        return staticLayout;
+        StaticLayout layout = layoutBuilder.build();
+        ellipsisSpanned.setLayout(layout);
+        return layout;
       }
     }
     return layoutBuilder.build();

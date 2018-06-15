@@ -8,19 +8,16 @@ import java.util.Arrays;
 /**
  * Fix Spanned Ellipsis bug.
  */
-public class EllipsisSpannedContainer implements Spanned {
+public class EllipsisSpannedContainer implements Spanned, GetChars{
+  public static final char[] ELLIPSIS_NORMAL = { '\u2026' }; // this is "..."
   private final Spanned mSourceSpanned;
+  private Layout mLayout;
   private int mEllipsisStart = -1;
   private int mEllipsisEnd = -1;
   private ReplacementSpan mCustomEllipsisSpan;
 
   public EllipsisSpannedContainer(Spanned spanned) {
     mSourceSpanned = spanned;
-  }
-
-  public void setEllipsisRange(int ellipsisStart, int ellipsisEnd) {
-    mEllipsisStart = ellipsisStart;
-    mEllipsisEnd = ellipsisEnd;
   }
 
   public void setCustomEllipsisSpan(ReplacementSpan customEllipsisSpan) {
@@ -106,4 +103,49 @@ public class EllipsisSpannedContainer implements Spanned {
     return mSourceSpanned.subSequence(start, end);
   }
 
+  @Override
+  public void getChars(int start, int end, char[] dest, int destoff) {
+    if (mLayout != null) {
+      TextUtils.getChars(mSourceSpanned, start, end, dest, destoff);
+      int line1 = mLayout.getLineForOffset(start);
+      int line2 = mLayout.getLineForOffset(end);
+
+      for (int i = line1; i <= line2; i++) {
+        ellipsize(start, end, i, dest, destoff);
+      }
+    }
+  }
+
+  void ellipsize(int start, int end, int line, char[] dest, int destoff) {
+    int ellipsisCount = mLayout.getEllipsisCount(line);
+
+    if (ellipsisCount == 0) {
+      return;
+    }
+
+    int ellipsisStart = mLayout.getEllipsisStart(line);
+    int linestart = mLayout.getLineStart(line);
+
+    for (int i = ellipsisStart; i < ellipsisStart + ellipsisCount; i++) {
+      char c;
+
+      if (i == ellipsisStart) {
+        c = ELLIPSIS_NORMAL[0]; // ellipsis
+        mEllipsisStart = i + linestart;
+        mEllipsisEnd = mEllipsisStart + ellipsisCount;
+      } else {
+        c = '\uFEFF'; // 0-width space
+      }
+
+      int a = i + linestart;
+
+      if (a >= start && a < end) {
+        dest[destoff + a - start] = c;
+      }
+    }
+  }
+
+  public void setLayout(StaticLayout layout) {
+    mLayout = layout;
+  }
 }
