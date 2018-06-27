@@ -37,6 +37,7 @@ public class FastTextView extends FastTextLayoutView {
   private ReplacementSpan mCustomEllipsisSpan;
   private boolean mEnableLayoutCache = false; // experiment
   TextViewAttrsHelper mAttrsHelper = new TextViewAttrsHelper();
+  private EllipsisSpannedContainer mEllipsisSpanned;
 
   public FastTextView(Context context) {
     this(context, null);
@@ -78,12 +79,9 @@ public class FastTextView extends FastTextLayoutView {
     if (textLayout != null) {
       CharSequence textSource = textLayout.getText();
       EllipsisSpannedContainer ellipsisSpannedContainer = null;
-      if (LayoutUtils.isEllipsizer(textSource)) {
-        textSource = LayoutUtils.extractFromEllipsizer(textSource);
-        if (textSource instanceof EllipsisSpannedContainer) {
-          ellipsisSpannedContainer = (EllipsisSpannedContainer) textSource;
-          textSource = ellipsisSpannedContainer.getSourceSpanned();
-        }
+      if (LayoutUtils.isEllipsizer(textSource) && mEllipsisSpanned != null) {
+        ellipsisSpannedContainer = mEllipsisSpanned;
+        textSource = ellipsisSpannedContainer.getSourceSpanned();
       }
       if (textSource instanceof Spannable) {
         if (ClickableSpanUtil.handleClickableSpan(this, textLayout, (Spannable) textSource, event)
@@ -232,6 +230,7 @@ public class FastTextView extends FastTextLayoutView {
     if (mEnableLayoutCache && cleanCache) {
       TextLayoutCache.STATIC_LAYOUT_CACHE.remove(mText);
     }
+    mEllipsisSpanned = null;
     setTextLayout(null);
     requestLayout();
     invalidate();
@@ -355,6 +354,7 @@ public class FastTextView extends FastTextLayoutView {
         }
         StaticLayout layout = layoutBuilder.build();
         ellipsisSpanned.setLayout(layout);
+        mEllipsisSpanned = ellipsisSpanned;
         return layout;
       }
     }
