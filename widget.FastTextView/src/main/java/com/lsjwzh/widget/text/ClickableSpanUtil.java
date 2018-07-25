@@ -5,18 +5,13 @@ import android.text.Selection;
 import android.text.Spannable;
 import android.text.Spanned;
 import android.text.style.ClickableSpan;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 
 public class ClickableSpanUtil {
-  public interface Clickable {
-    /**
-     * Performs the click action associated with this span.
-     */
-    void onClick(View widget);
-  }
-
-  public static boolean handleClickableSpan(View view, Layout layout, Spanned buffer, Class<? extends Clickable> spanType, MotionEvent event) {
+  public static boolean handleClickableSpan(View view, Layout layout, Spanned buffer, Class<?
+      extends Clickable> spanType, MotionEvent event) {
     int action = event.getAction();
 
     if (action == MotionEvent.ACTION_UP ||
@@ -31,7 +26,7 @@ public class ClickableSpanUtil {
       y += view.getScrollY();
 
       int line = layout.getLineForVertical(y);
-      int off = layout.getOffsetForHorizontal(line, x);
+      int off = getOffsetForHorizontal(view, layout, x, line);
 
       Clickable[] link = buffer.getSpans(off, off, spanType);
 
@@ -52,7 +47,8 @@ public class ClickableSpanUtil {
     return false;
   }
 
-  public static boolean handleClickableSpan(View view, Layout layout, Spannable buffer, MotionEvent event) {
+  public static boolean handleClickableSpan(View view, Layout layout, Spannable buffer,
+                                            MotionEvent event) {
     int action = event.getAction();
 
     if (action == MotionEvent.ACTION_UP ||
@@ -67,7 +63,7 @@ public class ClickableSpanUtil {
       y += view.getScrollY();
 
       int line = layout.getLineForVertical(y);
-      int off = layout.getOffsetForHorizontal(line, x);
+      int off = getOffsetForHorizontal(view, layout, x, line);
 
       ClickableSpan[] link = buffer.getSpans(off, off, ClickableSpan.class);
 
@@ -86,6 +82,39 @@ public class ClickableSpanUtil {
     }
 
     return false;
+  }
+
+  private static int getOffsetForHorizontal(View view, Layout layout, int x, int line) {
+    if (view.getWidth() > layout.getWidth()) {
+      if (view instanceof FastTextView) {
+        int gravity = ((FastTextView) view).getGravity();
+        int translateX;
+        int horizontalGravity = gravity & Gravity.RELATIVE_HORIZONTAL_GRAVITY_MASK;
+        switch (horizontalGravity) {
+          default:
+          case Gravity.LEFT:
+            translateX = view.getPaddingLeft();
+            break;
+          case Gravity.CENTER_HORIZONTAL:
+            translateX = view.getPaddingLeft() + (((FastTextView) view).getInnerWidth() - layout
+                .getWidth()) / 2;
+            break;
+          case Gravity.RIGHT:
+            translateX = view.getPaddingLeft() + ((FastTextView) view).getInnerWidth() - layout
+                .getWidth();
+            break;
+        }
+        x -= translateX;
+      }
+    }
+    return layout.getOffsetForHorizontal(line, x);
+  }
+
+  public interface Clickable {
+    /**
+     * Performs the click action associated with this span.
+     */
+    void onClick(View widget);
   }
 
 }

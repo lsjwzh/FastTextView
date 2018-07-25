@@ -181,7 +181,7 @@ public class FastTextView extends FastTextLayoutView {
     }
   }
 
-  private int getInnerWidth() {
+  public int getInnerWidth() {
     return getWidth() - getPaddingLeft() - getPaddingRight();
   }
 
