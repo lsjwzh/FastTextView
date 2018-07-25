@@ -331,13 +331,14 @@ public class FastTextView extends FastTextLayoutView {
         .setIncludePad(true);
     if (truncateAt != null) {
       layoutBuilder.setEllipsize(truncateAt);
+      EllipsisSpannedContainer ellipsisSpanned =
+          new EllipsisSpannedContainer(text instanceof Spanned ? (Spanned) text : new
+              SpannableString(text));
+      ellipsisSpanned.setCustomEllipsisSpan(mCustomEllipsisSpan);
+      layoutBuilder.setText(ellipsisSpanned);
       if (contentWidth > layoutTargetWidth * mAttrsHelper.mMaxLines) {
-        EllipsisSpannedContainer ellipsisSpanned =
-            new EllipsisSpannedContainer(text instanceof Spanned ? (Spanned) text : new
-                SpannableString(text));
-        ellipsisSpanned.setCustomEllipsisSpan(mCustomEllipsisSpan);
-        layoutBuilder.setText(ellipsisSpanned);
         int ellipsisWithOffset = (int) mTextPaint.measureText(ReadMoreTextView.ELLIPSIS_NORMAL) - 2;
+
         // when StaticLayout call calculateEllipsis,
         // textWidth <= avail will cause do nothing so we should make it different with textWidth
         if (mCustomEllipsisSpan != null) {
@@ -352,11 +353,13 @@ public class FastTextView extends FastTextLayoutView {
         } else {
           layoutBuilder.setEllipsizedWidth(layoutTargetWidth);
         }
-        StaticLayout layout = layoutBuilder.build();
-        ellipsisSpanned.setLayout(layout);
-        mEllipsisSpanned = ellipsisSpanned;
-        return layout;
+      } else {
+        layoutBuilder.setEllipsizedWidth(contentWidth);
       }
+      StaticLayout layout = layoutBuilder.build();
+      ellipsisSpanned.setLayout(layout);
+      mEllipsisSpanned = ellipsisSpanned;
+      return layout;
     }
     return layoutBuilder.build();
   }
