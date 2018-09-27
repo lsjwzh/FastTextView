@@ -63,6 +63,7 @@ public class ClickableSpanUtil {
       y += view.getScrollY();
 
       int line = layout.getLineForVertical(y);
+      line = Math.min(layout.getLineCount() - 1, line); // 避免line超出line count
       int off = getOffsetForHorizontal(view, layout, x, line);
 
       ClickableSpan[] link = buffer.getSpans(off, off, ClickableSpan.class);
@@ -107,7 +108,12 @@ public class ClickableSpanUtil {
         x -= translateX;
       }
     }
-    return layout.getOffsetForHorizontal(line, x);
+    try {
+      return layout.getOffsetForHorizontal(line, x);
+    } catch (Throwable e) {
+      e.printStackTrace();
+    }
+    return layout.getLineEnd(line);
   }
 
   public interface Clickable {
