@@ -68,6 +68,9 @@ public class ReadMoreTextView extends FastTextView {
         width = mAttrsHelper.mMaxWidth;
       }
     }
+    if (width > 0) {
+      width = width - getPaddingLeft() - getPaddingRight();
+    }
     if (!TextUtils.isEmpty(getText()) && width > 0 &&
         (mLayout == null || width < mLayout.getWidth()
             || (width > mLayout.getWidth() && mLayout.getLineCount() > 1))) {

@@ -109,6 +109,9 @@ public class FastTextView extends FastTextLayoutView {
         width = mAttrsHelper.mMaxWidth;
       }
     }
+    if (width > 0) {
+      width = width - getPaddingLeft() - getPaddingRight();
+    }
     if (!TextUtils.isEmpty(mText) && width > 0 &&
         (mLayout == null || width < mLayout.getWidth()
             || (width > mLayout.getWidth() && mLayout.getLineCount() > 1))) {
