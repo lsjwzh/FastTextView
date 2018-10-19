@@ -10,7 +10,7 @@ properties.load(project.rootProject.file('local.properties').newDataInputStream(
 ext {
     siteUrl = properties.getProperty("siteUrl")
     gitUrl = properties.getProperty("gitUrl")
-    libVersion = '1.2.12'
+    libVersion = '1.2.13'
 }
 
 
