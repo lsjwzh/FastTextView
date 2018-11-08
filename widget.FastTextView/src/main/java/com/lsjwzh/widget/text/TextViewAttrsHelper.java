@@ -1,6 +1,7 @@
 package com.lsjwzh.widget.text;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Color;
@@ -15,14 +16,14 @@ import android.view.View;
 import static android.support.v4.view.ViewCompat.LAYOUT_DIRECTION_RTL;
 
 public class TextViewAttrsHelper {
-  int mSpacingAdd;
-  float mSpacingMultiplier = 1f;
-  int mMaxWidth = Integer.MAX_VALUE;
-  int mMaxLines = Integer.MAX_VALUE;
-  int mEllipsize = -1;
-  int mTextColor = Color.BLACK;
-  int mTextSize = 15;
-  CharSequence mText;
+  public int mSpacingAdd;
+  public float mSpacingMultiplier = 1f;
+  public int mMaxWidth = Integer.MAX_VALUE;
+  public int mMaxLines = Integer.MAX_VALUE;
+  public int mEllipsize = -1;
+  public ColorStateList mTextColor;
+  public int mTextSize = 15;
+  public CharSequence mText;
   private int mGravity;
 
   public void init(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
@@ -47,7 +48,10 @@ public class TextViewAttrsHelper {
           break;
         case com.android.internal.R.styleable.TextView_textColor:
           // Do not support ColorState
-          mTextColor = a.getColor(attr, Color.BLACK);
+          mTextColor = a.getColorStateList(attr);
+          if (mTextColor == null) {
+            mTextColor = ColorStateList.valueOf(Color.BLACK);
+          }
           break;
         case com.android.internal.R.styleable.TextView_textSize:
           mTextSize = a.getDimensionPixelSize(attr, 15);

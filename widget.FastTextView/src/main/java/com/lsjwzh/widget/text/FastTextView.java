@@ -32,12 +32,13 @@ import android.view.MotionEvent;
  */
 public class FastTextView extends FastTextLayoutView {
   private static final String TAG = FastTextView.class.getSimpleName();
+  TextViewAttrsHelper mAttrsHelper = new TextViewAttrsHelper();
   private CharSequence mText;
   private TextPaint mTextPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
   private ReplacementSpan mCustomEllipsisSpan;
   private boolean mEnableLayoutCache = false; // experiment
-  TextViewAttrsHelper mAttrsHelper = new TextViewAttrsHelper();
   private EllipsisSpannedContainer mEllipsisSpanned;
+  private int mCurTextColor;
 
   public FastTextView(Context context) {
     this(context, null);
@@ -64,13 +65,37 @@ public class FastTextView extends FastTextLayoutView {
     mAttrsHelper.init(context, attrs, defStyleAttr, defStyleRes);
     setText(mAttrsHelper.mText);
     TextPaint textPaint = getTextPaint();
-    textPaint.setColor(mAttrsHelper.mTextColor);
+    mCurTextColor = mAttrsHelper.mTextColor.getDefaultColor();
+    textPaint.setColor(mCurTextColor);
     textPaint.setTextSize(mAttrsHelper.mTextSize);
     final Resources.Theme theme = context.getTheme();
     TypedArray a = theme.obtainStyledAttributes(attrs, R.styleable.FastTextView, defStyleAttr,
         defStyleRes);
     mEnableLayoutCache = a.getBoolean(R.styleable.FastTextView_enableLayoutCache, false);
     a.recycle();
+  }
+
+  private void updateTextColors() {
+    boolean inval = false;
+    final int[] drawableState = getDrawableState();
+    int color = mAttrsHelper.mTextColor.getColorForState(drawableState, mCurTextColor);
+    if (color != mCurTextColor) {
+      mCurTextColor = color;
+      getTextPaint().setColor(mCurTextColor);
+      inval = true;
+    }
+    if (inval) {
+      // Text needs to be redrawn with the new color
+      invalidate();
+    }
+  }
+
+  @Override
+  protected void drawableStateChanged() {
+    super.drawableStateChanged();
+    if (mAttrsHelper.mTextColor != null && mAttrsHelper.mTextColor.isStateful()) {
+      updateTextColors();
+    }
   }
 
   @Override
@@ -201,28 +226,15 @@ public class FastTextView extends FastTextLayoutView {
     return mTextPaint;
   }
 
+  public CharSequence getText() {
+    return mText;
+  }
+
   public void setText(@android.annotation.NonNull CharSequence text) {
     if (mText != text) {
       clearTextLayout(false);
     }
     mText = text;
-  }
-
-  public CharSequence getText() {
-    return mText;
-  }
-
-  /**
-   * Sets the horizontal alignment of the text and the
-   * vertical gravity that will be used when there is extra space
-   * in the TextView beyond what is required for the text itself.
-   *
-   * @see android.view.Gravity
-   */
-  public void setGravity(int gravity) {
-    if (mAttrsHelper.setGravity(gravity)) {
-      clearTextLayout();
-    }
   }
 
   private void clearTextLayout() {
@@ -248,9 +260,15 @@ public class FastTextView extends FastTextLayoutView {
     return mAttrsHelper.getGravity();
   }
 
-  public void setMaxWidth(int width) {
-    if (mAttrsHelper.mMaxWidth != width) {
-      mAttrsHelper.mMaxWidth = width;
+  /**
+   * Sets the horizontal alignment of the text and the
+   * vertical gravity that will be used when there is extra space
+   * in the TextView beyond what is required for the text itself.
+   *
+   * @see android.view.Gravity
+   */
+  public void setGravity(int gravity) {
+    if (mAttrsHelper.setGravity(gravity)) {
       clearTextLayout();
     }
   }
@@ -259,9 +277,9 @@ public class FastTextView extends FastTextLayoutView {
     return mAttrsHelper.mMaxWidth;
   }
 
-  public void setMaxLines(int maxLines) {
-    if (mAttrsHelper.mMaxLines != maxLines) {
-      mAttrsHelper.mMaxLines = maxLines;
+  public void setMaxWidth(int width) {
+    if (mAttrsHelper.mMaxWidth != width) {
+      mAttrsHelper.mMaxWidth = width;
       clearTextLayout();
     }
   }
@@ -270,8 +288,11 @@ public class FastTextView extends FastTextLayoutView {
     return mAttrsHelper.mMaxLines;
   }
 
-  public void setTextSize(float textSize) {
-    setTextSize(textSize, TypedValue.COMPLEX_UNIT_SP);
+  public void setMaxLines(int maxLines) {
+    if (mAttrsHelper.mMaxLines != maxLines) {
+      mAttrsHelper.mMaxLines = maxLines;
+      clearTextLayout();
+    }
   }
 
   /**
@@ -294,6 +315,10 @@ public class FastTextView extends FastTextLayoutView {
     return mTextPaint.getTextSize();
   }
 
+  public void setTextSize(float textSize) {
+    setTextSize(textSize, TypedValue.COMPLEX_UNIT_SP);
+  }
+
   public int getEllipsize() {
     return mAttrsHelper.mEllipsize;
   }
@@ -305,12 +330,12 @@ public class FastTextView extends FastTextLayoutView {
     }
   }
 
-  public void setCustomEllipsisSpan(ReplacementSpan customEllipsisSpan) {
-    mCustomEllipsisSpan = customEllipsisSpan;
-  }
-
   public ReplacementSpan getCustomEllipsisSpan() {
     return mCustomEllipsisSpan;
+  }
+
+  public void setCustomEllipsisSpan(ReplacementSpan customEllipsisSpan) {
+    mCustomEllipsisSpan = customEllipsisSpan;
   }
 
   @NonNull

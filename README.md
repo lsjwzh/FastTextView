@@ -52,7 +52,7 @@ repositories {
 
 dependencies {
     ...
-    compile 'com.lsjwzh.widget:FastTextView:1.2.13'
+    compile 'com.lsjwzh.widget:FastTextView:1.2.15'
     ...
 }
 ```
@@ -116,13 +116,16 @@ You should use 'android-hidden-api' to build project.
 # TODO List
 <del>1.Layout Cache (For List Scene)</del>
 
-2.ColorState background
+<del>2.ColorState background</del>
 
 <del>3.ReadMore</del>
 
 <del>4.Ellipsis</del>
 
 5.AutoSize
+
+<del>6.ColorState textColor</del>
+
 
 # License
 ```

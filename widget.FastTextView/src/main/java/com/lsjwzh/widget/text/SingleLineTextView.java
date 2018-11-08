@@ -48,7 +48,7 @@ public class SingleLineTextView extends FastTextLayoutView {
     mAttrsHelper.init(context, attrs, defStyleAttr, defStyleRes);
     setText(mAttrsHelper.mText);
     TextPaint textPaint = getPaint();
-    textPaint.setColor(mAttrsHelper.mTextColor);
+    textPaint.setColor(mAttrsHelper.mTextColor.getDefaultColor());
     textPaint.setTextSize(mAttrsHelper.mTextSize);
   }
 
