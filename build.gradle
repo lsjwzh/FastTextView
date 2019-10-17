@@ -4,11 +4,12 @@ buildscript {
     repositories {
         mavenCentral()
         jcenter()
+        google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.1'
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
-        classpath 'com.github.dcendents:android-maven-gradle-plugin:1.5'
+        classpath 'com.android.tools.build:gradle:3.2.1'
+//        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
+//        classpath 'com.github.dcendents:android-maven-gradle-plugin:1.5'
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -20,12 +21,13 @@ properties.load(project.rootProject.file('local.properties').newDataInputStream(
 allprojects {
     gradle.taskGraph.whenReady {
         tasks.each { task ->
-            if (task.name.equals('mockableAndroidJar')) {
+            if (task.name.equals('createMockableJar')) {
                 task.enabled = false
             }
         }
     }
     repositories {
+        google()
         maven {
             url "https://dl.bintray.com/lsjwzh/maven"
         }

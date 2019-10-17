@@ -1,12 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    compileSdkVersion 28
+    buildToolsVersion "28.0.3"
     defaultConfig {
         applicationId "com.wechat.testdemo"
         minSdkVersion 15
-        targetSdkVersion 25
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -23,12 +23,24 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:25.3.1'
-    compile 'com.android.support.constraint:constraint-layout:1.0.0-beta4'
-    compile 'com.android.support:design:25.3.1'
-    compile project(':widget.FastTextView')
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+    implementation 'com.android.support:design:28.0.0'
+    implementation project(':widget.FastTextView')
 //    compile project(':text.Textline')
 //    compile 'com.lsjwzh.widget:FastTextView:0.9.3'
 
+}
+
+task cleanAndroidMock(type: Delete) {
+    description = 'Deletes the mockable Android jar'
+
+    delete fileTree("${project.buildDir}/generated") {
+        include 'mockable-android*.jar'
+    }
+}
+
+project.afterEvaluate {
+    tasks['createMockableJar'].dependsOn cleanAndroidMock
 }

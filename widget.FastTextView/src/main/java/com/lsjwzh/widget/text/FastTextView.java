@@ -98,6 +98,12 @@ public class FastTextView extends FastTextLayoutView {
     }
   }
 
+  public void setLineSpacing(int spacingAdd, float spacingMultiplier) {
+    mAttrsHelper.mSpacingAdd = spacingAdd;
+    mAttrsHelper.mSpacingMultiplier = spacingMultiplier;
+    clearTextLayout();
+  }
+
   @Override
   public boolean onTouchEvent(MotionEvent event) {
     Layout textLayout = getTextLayout();

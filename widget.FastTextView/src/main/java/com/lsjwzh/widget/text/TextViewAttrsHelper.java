@@ -21,7 +21,7 @@ public class TextViewAttrsHelper {
   public int mMaxWidth = Integer.MAX_VALUE;
   public int mMaxLines = Integer.MAX_VALUE;
   public int mEllipsize = -1;
-  public ColorStateList mTextColor;
+  public ColorStateList mTextColor = ColorStateList.valueOf(Color.BLACK);
   public int mTextSize = 15;
   public CharSequence mText;
   private int mGravity;
@@ -49,9 +49,6 @@ public class TextViewAttrsHelper {
         case com.android.internal.R.styleable.TextView_textColor:
           // Do not support ColorState
           mTextColor = a.getColorStateList(attr);
-          if (mTextColor == null) {
-            mTextColor = ColorStateList.valueOf(Color.BLACK);
-          }
           break;
         case com.android.internal.R.styleable.TextView_textSize:
           mTextSize = a.getDimensionPixelSize(attr, 15);
