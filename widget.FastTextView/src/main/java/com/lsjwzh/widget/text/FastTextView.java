@@ -357,7 +357,7 @@ public class FastTextView extends FastTextLayoutView {
     }
 
 
-    StaticLayoutBuilderCompat layoutBuilder = StaticLayoutBuilderCompat.obtain(text, 0, text
+    StaticLayoutBuilderCompat layoutBuilder = createStaticLayoutBuilder(text, 0, text
         .length(), mTextPaint, layoutTargetWidth);
     layoutBuilder.setLineSpacing(mAttrsHelper.mSpacingAdd, mAttrsHelper.mSpacingMultiplier)
         .setMaxLines(mAttrsHelper.mMaxLines)
@@ -390,12 +390,24 @@ public class FastTextView extends FastTextLayoutView {
       } else {
         layoutBuilder.setEllipsizedWidth(contentWidth);
       }
+      beforeStaticLayoutBuild(layoutBuilder);
       StaticLayout layout = layoutBuilder.build();
       ellipsisSpanned.setLayout(layout);
       mEllipsisSpanned = ellipsisSpanned;
       return layout;
     }
+    beforeStaticLayoutBuild(layoutBuilder);
     return layoutBuilder.build();
+  }
+
+  protected StaticLayoutBuilderCompat createStaticLayoutBuilder(CharSequence source,
+                                                                int start, int end,
+                                                                TextPaint paint, int width) {
+    return StaticLayoutBuilderCompat.obtain(source, start, end, paint, width);
+  }
+
+  protected void beforeStaticLayoutBuild(StaticLayoutBuilderCompat layoutBuilder) {
+    // do noting
   }
 
   protected int getContentWidth(CharSequence text) {

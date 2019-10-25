@@ -1,7 +1,7 @@
 apply plugin: 'com.android.library'
 //apply plugin: 'com.github.dcendents.android-maven'
-//apply plugin: 'com.jfrog.bintray'
-//apply plugin: "maven-publish"
+apply plugin: 'com.jfrog.bintray'
+apply plugin: "maven-publish"
 
 
 Properties properties = new Properties()
@@ -59,7 +59,30 @@ task cleanAndroidMock(type: Delete) {
 project.afterEvaluate {
     tasks['createMockableJar'].dependsOn cleanAndroidMock
 }
+//
+bintray {
+    user = properties.getProperty('BINTRAY_USER')
+    key = properties.getProperty('BINTRAY_KEY')
+//    configurations = ['archives']
+    publications = ['MyPublication']
 
+    pkg {
+        repo = 'maven'
+        name = properties.getProperty('maven.name')
+        licenses = ['Apache-2.0']
+        vcsUrl = gitUrl
+        publish = true
+        publicDownloadNumbers = true
+        version {
+            name = libVersion
+            desc = properties.getProperty('project.name')
+            released = new Date()
+            version libVersion
+        }
+    }
+}
+
+//
 //install {
 //    repositories.mavenInstaller {
 //        // This generates POM.xml with proper parameters
@@ -91,31 +114,8 @@ project.afterEvaluate {
 //        }
 //    }
 //}
-//
-//
-//
-//task sourcesJar(type: Jar) {
-//    classifier = 'sources'
-//    from android.sourceSets.main.java.srcDirs
-//}
-//
-//task javadoc(type: Javadoc) {
-//    source = android.sourceSets.main.java.srcDirs
-//    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
-//    classpath += project.files(configurations.compile.files, android.getBootClasspath().join(File.pathSeparator))
-//}
-//
-//javadoc {
-//    options {
-//        encoding "UTF-8"
-//    }
-//}
-//
-//task javadocJar(type: Jar, dependsOn: javadoc) {
-//    classifier = 'javadoc'
-//    from javadoc.destinationDir
-//}
-//
+
+
 //android.libraryVariants.all { variant ->
 //    println variant.javaCompile.classpath.files
 //    if (variant.name == 'release') { //我们只需 release 的 javadoc
@@ -123,7 +123,9 @@ project.afterEvaluate {
 //            // title = ''
 //            // description = ''
 //            source = variant.javaCompile.source
-//            classpath = files(variant.javaCompile.classpath.files, project.android.getBootClasspath())
+//            doFirst {
+//                classpath = files(variant.javaCompile.classpath.files, project.android.getBootClasspath())
+//            }
 //            options {
 //                encoding "utf-8"
 //                links "http://docs.oracle.com/javase/7/docs/api/"
@@ -147,67 +149,70 @@ project.afterEvaluate {
 //    archives sourcesJar
 //    archives file("$buildDir/outputs/aar/$name-release.aar")
 //}
-//
-//// Create the pom configuration:
-//def pomConfig = {
-//    licenses {
-//        license {
-//            name "The Apache Software License, Version 2.0"
-//            url "http://www.apache.org/licenses/LICENSE-2.0.txt"
-//            distribution "repo"
-//        }
-//    }
-//    developers {
-//        developer { //填写的一些基本信息
-//            id properties.getProperty("developer.name")
-//            name properties.getProperty("developer.name")
-//            email properties.getProperty("developer.email")
-//        }
-//    }
-//
-//    scm {
-//        url siteUrl
-//    }
-//}
-//
-//publishing {
-//    publications {
-//        MyPublication(MavenPublication) {
-//            artifact sourcesJar
-//            artifact javadocJar
-//            artifact("$buildDir/outputs/aar/$project.name-release.aar")
-//            groupId properties.getProperty('project.groudId')
-//            artifactId properties.getProperty('project.name')
-//            version libVersion
-//            pom.withXml {
-//                def root = asNode()
-//                root.appendNode('description', 'Your description of the lib')
-//                root.appendNode('name', 'Your name of the lib')
-//                root.appendNode('url', 'https://site_for_lib.tld')
-//                root.children().last() + pomConfig
-//            }
-//        }
-//    }
-//}
-//bintray {
-//    user = properties.getProperty('BINTRAY_USER')
-//    key = properties.getProperty('BINTRAY_KEY')
-////    configurations = ['archives']
-//    publications = ['MyPublication']
-//
-//    pkg {
-//        repo = 'maven'
-//        name = properties.getProperty('maven.name')
-//        licenses = ['Apache-2.0']
-//        vcsUrl = gitUrl
-//        publish = true
-//        publicDownloadNumbers = true
-//        version {
-//            name = libVersion
-//            desc = properties.getProperty('project.name')
-//            released = new Date()
-//            version libVersion
-//        }
-//    }
-//}
 
+// Create the pom configuration:
+def pomConfig = {
+    licenses {
+        license {
+            name "The Apache Software License, Version 2.0"
+            url "http://www.apache.org/licenses/LICENSE-2.0.txt"
+            distribution "repo"
+        }
+    }
+    developers {
+        developer { //填写的一些基本信息
+            id properties.getProperty("developer.name")
+            name properties.getProperty("developer.name")
+            email properties.getProperty("developer.email")
+        }
+    }
+
+    scm {
+        url siteUrl
+    }
+}
+
+project.afterEvaluate {
+    publishing {
+        publications {
+            MyPublication(MavenPublication) {
+                task androidJavadocs(type: Javadoc) {
+                    source = android.sourceSets.main.java.srcDirs
+                    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+                    android.libraryVariants.all { variant ->
+                        if (variant.name == 'release') {
+                            owner.classpath += variant.javaCompile.classpath
+                        }
+                    }
+                    failOnError false
+                    exclude '**/R.html', '**/R.*.html', '**/index.html'
+                }
+
+                task androidJavadocsJar(type: Jar, dependsOn: androidJavadocs) {
+                    classifier = 'javadoc'
+                    from androidJavadocs.destinationDir
+                }
+
+                task androidSourcesJar(type: Jar) {
+                    classifier = 'sources'
+                    from android.sourceSets.main.java.srcDirs
+                }
+
+                artifact bundleReleaseAar
+                artifact androidSourcesJar
+                artifact androidJavadocsJar
+
+                groupId properties.getProperty('project.groudId')
+                artifactId properties.getProperty('project.name')
+                version libVersion
+                pom.withXml {
+                    def root = asNode()
+                    root.appendNode('description', 'Your description of the lib')
+                    root.appendNode('name', 'Your name of the lib')
+                    root.appendNode('url', 'https://site_for_lib.tld')
+                    root.children().last() + pomConfig
+                }
+            }
+        }
+    }
+}

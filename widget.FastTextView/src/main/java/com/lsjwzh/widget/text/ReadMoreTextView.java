@@ -24,10 +24,10 @@ public class ReadMoreTextView extends FastTextView {
   public static final String COLLAPSE_NORMAL = "\u25b2"; // this is "▲"
 
 
-  private boolean mIsShowAll;
-  private StaticLayout mAllTextLayout;
-  private StaticLayout mWithEllipsisLayout;
-  private ReplacementSpan mCollapseSpan = new EllipsisSpan(COLLAPSE_NORMAL);
+  protected boolean mIsShowAll;
+  protected StaticLayout mAllTextLayout;
+  protected StaticLayout mWithEllipsisLayout;
+  protected ReplacementSpan mCollapseSpan = new EllipsisSpan(COLLAPSE_NORMAL);
 
   public ReadMoreTextView(Context context) {
     this(context, null);
@@ -121,11 +121,12 @@ public class ReadMoreTextView extends FastTextView {
       textWithExtraEnd.setSpan(mCollapseSpan, textWithExtraEnd.length() - 1, textWithExtraEnd.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
     }
     StaticLayoutBuilderCompat layoutBuilder =
-        StaticLayoutBuilderCompat.obtain(textWithExtraEnd, 0, textWithExtraEnd.length(), getPaint(),
+        createStaticLayoutBuilder(textWithExtraEnd, 0, textWithExtraEnd.length(), getPaint(),
             maxWidth > 0 ? Math.min(maxWidth, mWithEllipsisLayout.getWidth()) : mWithEllipsisLayout.getWidth());
     layoutBuilder.setLineSpacing(mAttrsHelper.mSpacingAdd, mAttrsHelper.mSpacingMultiplier)
         .setAlignment(TextViewAttrsHelper.getLayoutAlignment(this, getGravity()))
         .setIncludePad(true);
+    beforeStaticLayoutBuild(layoutBuilder);
     mAllTextLayout = layoutBuilder.build();
     return mWithEllipsisLayout;
   }
