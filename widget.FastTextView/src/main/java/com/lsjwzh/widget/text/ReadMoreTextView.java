@@ -12,6 +12,7 @@ import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.StaticLayout;
 import android.text.StaticLayoutBuilderCompat;
+import android.text.TextPaint;
 import android.text.TextUtils;
 import android.text.style.ReplacementSpan;
 import android.util.AttributeSet;
@@ -19,11 +20,9 @@ import android.util.Log;
 import android.view.View;
 
 public class ReadMoreTextView extends FastTextView {
-  static final String TAG = ReadMoreTextView.class.getSimpleName();
   public static final String ELLIPSIS_NORMAL = "\u2026"; // this is "..."
   public static final String COLLAPSE_NORMAL = "\u25b2"; // this is "▲"
-
-
+  static final String TAG = ReadMoreTextView.class.getSimpleName();
   protected boolean mIsShowAll;
   protected StaticLayout mAllTextLayout;
   protected StaticLayout mWithEllipsisLayout;
@@ -43,7 +42,8 @@ public class ReadMoreTextView extends FastTextView {
   }
 
   @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-  public ReadMoreTextView(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+  public ReadMoreTextView(Context context, @Nullable AttributeSet attrs, int defStyleAttr,
+                          int defStyleRes) {
     super(context, attrs, defStyleAttr, defStyleRes);
     setCustomEllipsisSpan(new EllipsisSpan(ELLIPSIS_NORMAL));
   }
@@ -83,7 +83,8 @@ public class ReadMoreTextView extends FastTextView {
     } else if (mAllTextLayout != null && mIsShowAll) {
       mLayout = mAllTextLayout;
       setMeasuredDimension(getMeasuredWidth(getPaddingLeft() + getPaddingRight() + mAllTextLayout.getWidth(), widthMeasureSpec),
-          getMeasuredHeight(getPaddingTop() + getPaddingBottom() + mAllTextLayout.getHeight(), heightMeasureSpec));
+          getMeasuredHeight(getPaddingTop() + getPaddingBottom() + mAllTextLayout.getHeight(),
+              heightMeasureSpec));
     } else {
       super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
@@ -118,18 +119,54 @@ public class ReadMoreTextView extends FastTextView {
     SpannableStringBuilder textWithExtraEnd = new SpannableStringBuilder(text);
     textWithExtraEnd.append(COLLAPSE_NORMAL);
     if (mCollapseSpan != null) {
-      textWithExtraEnd.setSpan(mCollapseSpan, textWithExtraEnd.length() - 1, textWithExtraEnd.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+      textWithExtraEnd.setSpan(mCollapseSpan, textWithExtraEnd.length() - 1,
+          textWithExtraEnd.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
     }
     StaticLayoutBuilderCompat layoutBuilder =
-        createStaticLayoutBuilder(textWithExtraEnd, 0, textWithExtraEnd.length(), getPaint(),
-            maxWidth > 0 ? Math.min(maxWidth, mWithEllipsisLayout.getWidth()) : mWithEllipsisLayout.getWidth());
+        createAllStaticLayoutBuilder(textWithExtraEnd, 0, textWithExtraEnd.length(), getPaint(),
+            maxWidth > 0 ? Math.min(maxWidth, mWithEllipsisLayout.getWidth()) :
+                mWithEllipsisLayout.getWidth());
     layoutBuilder.setLineSpacing(mAttrsHelper.mSpacingAdd, mAttrsHelper.mSpacingMultiplier)
         .setAlignment(TextViewAttrsHelper.getLayoutAlignment(this, getGravity()))
         .setIncludePad(true);
-    beforeStaticLayoutBuild(layoutBuilder);
+    beforeAllStaticLayoutBuild(layoutBuilder);
     mAllTextLayout = layoutBuilder.build();
     return mWithEllipsisLayout;
   }
+
+  @Override
+  final protected StaticLayoutBuilderCompat createStaticLayoutBuilder(CharSequence source,
+                                                                      int start, int end,
+                                                                      TextPaint paint, int width) {
+    return createEllipsisStaticLayoutBuilder(source, start, end, paint, width);
+  }
+
+  @Override
+  final protected void beforeStaticLayoutBuild(StaticLayoutBuilderCompat layoutBuilder) {
+    beforeEllipsisStaticLayoutBuild(layoutBuilder);
+  }
+
+  protected StaticLayoutBuilderCompat createAllStaticLayoutBuilder(CharSequence source,
+                                                                   int start, int end,
+                                                                   TextPaint paint, int width) {
+    return StaticLayoutBuilderCompat.obtain(source, start, end, paint, width);
+  }
+
+  protected StaticLayoutBuilderCompat createEllipsisStaticLayoutBuilder(CharSequence source,
+                                                                        int start, int end,
+                                                                        TextPaint paint,
+                                                                        int width) {
+    return StaticLayoutBuilderCompat.obtain(source, start, end, paint, width);
+  }
+
+  protected void beforeAllStaticLayoutBuild(StaticLayoutBuilderCompat layoutBuilder) {
+    // do noting
+  }
+
+  protected void beforeEllipsisStaticLayoutBuild(StaticLayoutBuilderCompat layoutBuilder) {
+    // do noting
+  }
+
 
   public void showAll() {
     mIsShowAll = true;
@@ -159,12 +196,15 @@ public class ReadMoreTextView extends FastTextView {
     }
 
     @Override
-    public void draw(@NonNull Canvas canvas, CharSequence text, @IntRange(from = 0) int start, @IntRange(from = 0) int end, float x, int top, int y, int bottom, @NonNull Paint paint) {
+    public void draw(@NonNull Canvas canvas, CharSequence text, @IntRange(from = 0) int start,
+                     @IntRange(from = 0) int end, float x, int top, int y, int bottom,
+                     @NonNull Paint paint) {
       canvas.drawText(mText, 0, mText.length(), x, y, paint);
     }
 
     @Override
-    public int getSize(@NonNull Paint paint, CharSequence text, @IntRange(from = 0) int start, @IntRange(from = 0) int end, @Nullable Paint.FontMetricsInt fm) {
+    public int getSize(@NonNull Paint paint, CharSequence text, @IntRange(from = 0) int start,
+                       @IntRange(from = 0) int end, @Nullable Paint.FontMetricsInt fm) {
       return (int) Math.ceil(paint.measureText(mText, 0, mText.length()));
     }
 
