@@ -143,9 +143,7 @@ public class FastTextView extends FastTextLayoutView {
     if (width > 0) {
       width = width - getPaddingLeft() - getPaddingRight();
     }
-    if (!TextUtils.isEmpty(mText) && width > 0 &&
-        (mLayout == null || width < mLayout.getWidth()
-            || (width > mLayout.getWidth() && mLayout.getLineCount() > 1))) {
+    if (shouldResetStaticLayout(width, mText, mLayout)) {
       if (mEnableLayoutCache) {
         mLayout = TextLayoutCache.STATIC_LAYOUT_CACHE.get(mText);
         if (mLayout == null) {
@@ -171,6 +169,13 @@ public class FastTextView extends FastTextLayoutView {
     if (BuildConfig.DEBUG) {
       Log.d(TAG, "onMeasure cost:" + (end - start));
     }
+  }
+
+  protected boolean shouldResetStaticLayout(int width, CharSequence text, Layout layout) {
+    return !TextUtils.isEmpty(text) && width > 0 &&
+        (layout == null || width < layout.getWidth()
+            || (width > layout.getWidth() && layout.getLineCount() > 1)
+            || (width > layout.getWidth() && getContentWidth(text) > layout.getWidth()));
   }
 
   @Override
