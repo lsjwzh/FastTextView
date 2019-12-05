@@ -26,6 +26,7 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.MotionEvent;
+import android.view.ViewTreeObserver;
 
 /**
  * Simple and Fast TextView.
@@ -132,7 +133,6 @@ public class FastTextView extends FastTextLayoutView {
 
   @Override
   protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-    long start = System.currentTimeMillis();
     int width = MeasureSpec.getSize(widthMeasureSpec);
     boolean exactly = MeasureSpec.getMode(widthMeasureSpec) == MeasureSpec.EXACTLY;
     if (!exactly) {
@@ -163,11 +163,6 @@ public class FastTextView extends FastTextLayoutView {
           getMeasuredHeight(getPaddingTop() + getPaddingBottom() + height, heightMeasureSpec));
     } else {
       super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-    }
-
-    long end = System.currentTimeMillis();
-    if (BuildConfig.DEBUG) {
-      Log.d(TAG, "onMeasure cost:" + (end - start));
     }
   }
 

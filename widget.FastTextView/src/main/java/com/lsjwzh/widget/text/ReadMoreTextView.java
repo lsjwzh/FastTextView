@@ -115,7 +115,18 @@ public class ReadMoreTextView extends FastTextView {
   @NonNull
   @Override
   protected StaticLayout makeLayout(CharSequence text, int maxWidth, boolean exactly) {
-    mWithEllipsisLayout = super.makeLayout(text, maxWidth, exactly);
+    if (mAttrsHelper.mMaxLines < Integer.MAX_VALUE) {
+      String[] strs = text.toString().split("\n");
+      StringBuilder builder = new StringBuilder();
+      for (String str : strs) {
+        if (str.isEmpty()) continue;
+        builder.append(str);
+        builder.append("\n");
+      }
+      mWithEllipsisLayout = super.makeLayout(builder.toString(), maxWidth, exactly);
+    } else {
+      mWithEllipsisLayout = super.makeLayout(text, maxWidth, exactly);
+    }
     SpannableStringBuilder textWithExtraEnd = new SpannableStringBuilder(text);
     if (mCollapseSpan != null) {
       textWithExtraEnd.append(COLLAPSE_NORMAL);
