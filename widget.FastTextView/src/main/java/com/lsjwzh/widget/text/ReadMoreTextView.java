@@ -27,6 +27,7 @@ public class ReadMoreTextView extends FastTextView {
   protected StaticLayout mAllTextLayout;
   protected StaticLayout mWithEllipsisLayout;
   protected ReplacementSpan mCollapseSpan = new EllipsisSpan(COLLAPSE_NORMAL);
+  protected boolean mCompressText;
 
   public ReadMoreTextView(Context context) {
     this(context, null);
@@ -115,7 +116,7 @@ public class ReadMoreTextView extends FastTextView {
   @NonNull
   @Override
   protected StaticLayout makeLayout(CharSequence text, int maxWidth, boolean exactly) {
-    if (mAttrsHelper.mMaxLines < Integer.MAX_VALUE) {
+    if (mCompressText) {
       String[] strs = text.toString().split("\n");
       StringBuilder builder = new StringBuilder();
       for (String str : strs) {
@@ -123,6 +124,7 @@ public class ReadMoreTextView extends FastTextView {
         builder.append(str);
         builder.append("\n");
       }
+      builder.append("\n"); // extra line to fix ellipse symbol display
       mWithEllipsisLayout = super.makeLayout(builder.toString(), maxWidth, exactly);
     } else {
       mWithEllipsisLayout = super.makeLayout(text, maxWidth, exactly);
@@ -197,6 +199,10 @@ public class ReadMoreTextView extends FastTextView {
 
   public boolean isShowAll() {
     return mIsShowAll;
+  }
+
+  public void compressText(boolean enable) {
+    mCompressText = enable;
   }
 
   public static class EllipsisSpan extends ReplacementSpan implements ClickableSpanUtil.Clickable {
