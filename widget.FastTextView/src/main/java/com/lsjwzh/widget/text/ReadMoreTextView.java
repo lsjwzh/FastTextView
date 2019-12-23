@@ -119,12 +119,16 @@ public class ReadMoreTextView extends FastTextView {
     if (mCompressText) {
       String[] strs = text.toString().split("\n");
       StringBuilder builder = new StringBuilder();
+      int realCount = 0;
       for (String str : strs) {
+        realCount++;
         if (str.isEmpty()) continue;
         builder.append(str);
         builder.append("\n");
       }
-      builder.append("\n"); // extra line to fix ellipse symbol display
+      if (realCount > 2) {
+        builder.append("\n"); // extra line to fix ellipse symbol display
+      }
       mWithEllipsisLayout = super.makeLayout(builder.toString(), maxWidth, exactly);
     } else {
       mWithEllipsisLayout = super.makeLayout(text, maxWidth, exactly);
