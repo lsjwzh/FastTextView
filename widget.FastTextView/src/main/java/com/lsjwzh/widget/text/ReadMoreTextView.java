@@ -8,6 +8,7 @@ import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
+import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.StaticLayout;
@@ -15,6 +16,7 @@ import android.text.StaticLayoutBuilderCompat;
 import android.text.TextPaint;
 import android.text.TextUtils;
 import android.text.style.ReplacementSpan;
+import android.text.util.Linkify;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -27,7 +29,6 @@ public class ReadMoreTextView extends FastTextView {
   protected StaticLayout mAllTextLayout;
   protected StaticLayout mWithEllipsisLayout;
   protected ReplacementSpan mCollapseSpan = new EllipsisSpan(COLLAPSE_NORMAL);
-  protected boolean mCompressText;
 
   public ReadMoreTextView(Context context) {
     this(context, null);
@@ -116,24 +117,11 @@ public class ReadMoreTextView extends FastTextView {
   @NonNull
   @Override
   protected StaticLayout makeLayout(CharSequence text, int maxWidth, boolean exactly) {
-    if (mCompressText) {
-      String[] strs = text.toString().split("\n");
-      StringBuilder builder = new StringBuilder();
-      int realCount = 0;
-      for (String str : strs) {
-        realCount++;
-        if (str.isEmpty()) continue;
-        builder.append(str);
-        builder.append("\n");
-      }
-      if (realCount > 2) {
-        builder.append("\n"); // extra line to fix ellipse symbol display
-      }
-      mWithEllipsisLayout = super.makeLayout(builder.toString(), maxWidth, exactly);
-    } else {
-      mWithEllipsisLayout = super.makeLayout(text, maxWidth, exactly);
-    }
+    mWithEllipsisLayout = super.makeLayout(text, maxWidth, exactly);
     SpannableStringBuilder textWithExtraEnd = new SpannableStringBuilder(text);
+    if (mLinkifyMask > 0) {
+      Linkify.addLinks(textWithExtraEnd, mLinkifyMask);
+    }
     if (mCollapseSpan != null) {
       textWithExtraEnd.append(COLLAPSE_NORMAL);
       textWithExtraEnd.setSpan(mCollapseSpan, textWithExtraEnd.length() - 1,
@@ -203,10 +191,6 @@ public class ReadMoreTextView extends FastTextView {
 
   public boolean isShowAll() {
     return mIsShowAll;
-  }
-
-  public void compressText(boolean enable) {
-    mCompressText = enable;
   }
 
   public static class EllipsisSpan extends ReplacementSpan implements ClickableSpanUtil.Clickable {
