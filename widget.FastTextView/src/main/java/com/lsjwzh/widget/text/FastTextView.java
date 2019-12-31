@@ -1,6 +1,8 @@
 package com.lsjwzh.widget.text;
 
+import android.annotation.ColorInt;
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
@@ -64,7 +66,7 @@ public class FastTextView extends FastTextLayoutView {
       defStyleRes) {
     mAttrsHelper.init(context, attrs, defStyleAttr, defStyleRes);
     setText(mAttrsHelper.mText);
-    TextPaint textPaint = getTextPaint();
+    TextPaint textPaint = getPaint();
     mCurTextColor = mAttrsHelper.mTextColor.getDefaultColor();
     textPaint.setColor(mCurTextColor);
     textPaint.setTextSize(mAttrsHelper.mTextSize);
@@ -81,7 +83,7 @@ public class FastTextView extends FastTextLayoutView {
     int color = mAttrsHelper.mTextColor.getColorForState(drawableState, mCurTextColor);
     if (color != mCurTextColor) {
       mCurTextColor = color;
-      getTextPaint().setColor(mCurTextColor);
+      getPaint().setColor(mCurTextColor);
       inval = true;
     }
     if (inval) {
@@ -102,6 +104,38 @@ public class FastTextView extends FastTextLayoutView {
     mAttrsHelper.mSpacingAdd = spacingAdd;
     mAttrsHelper.mSpacingMultiplier = spacingMultiplier;
     clearTextLayout();
+  }
+
+  public void setTextColor(ColorStateList colorStateList) {
+    mAttrsHelper.mTextColor = colorStateList;
+    updateTextColors();
+  }
+
+  public void setTextColor(@ColorInt int color) {
+    mAttrsHelper.mTextColor = ColorStateList.valueOf(color);
+    updateTextColors();
+  }
+
+  /**
+   * Gets the text colors for the different states (normal, selected, focused) of the TextView.
+   *
+   * @see #setTextColor(ColorStateList)
+   * @see #setTextColor(int)
+   *
+   * @attr ref android.R.styleable#TextView_textColor
+   */
+  public final ColorStateList getTextColors() {
+    return mAttrsHelper.mTextColor;
+  }
+
+  /**
+   * Return the current color selected for normal text.
+   *
+   * @return Returns the current text color.
+   */
+  @ColorInt
+  public final int getCurrentTextColor() {
+    return mCurTextColor;
   }
 
   @Override

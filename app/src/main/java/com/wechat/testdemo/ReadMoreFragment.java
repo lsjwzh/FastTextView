@@ -35,7 +35,7 @@ public class ReadMoreFragment extends Fragment {
     }
     mRootView = inflater.inflate(R.layout.read_more_demo, container, false);
     SpannableStringBuilder spannableStringBuilder = getSpannable();
-    ReadMoreTextView readMoreTextView = (ReadMoreTextView) mRootView.findViewById(R.id.readmore_tv);
+    final ReadMoreTextView readMoreTextView = mRootView.findViewById(R.id.readmore_tv);
     readMoreTextView.setText(spannableStringBuilder);
     readMoreTextView.setCustomEllipsisSpan(new ReadMoreTextView.EllipsisSpan("  Read More") {
       @Override
@@ -53,6 +53,13 @@ public class ReadMoreFragment extends Fragment {
         paint.setColor(Color.RED);
         super.draw(canvas, text, start, end, x, top, y, bottom, paint);
         paint.setColor(oldColor);
+      }
+    });
+    readMoreTextView.setOnLongClickListener(new View.OnLongClickListener() {
+      @Override
+      public boolean onLongClick(View v) {
+        readMoreTextView.setTextColor(Color.RED);
+        return false;
       }
     });
     return mRootView;

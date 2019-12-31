@@ -63,6 +63,8 @@ public class TextViewAttrsHelper {
     }
   }
 
+  
+
   /**
    * Sets the horizontal alignment of the text and the
    * vertical gravity that will be used when there is extra space

@@ -94,7 +94,6 @@ public class FastTextViewListTestFragment extends Fragment {
 
         ViewHolder viewHolder = new ViewHolder();
         viewHolder.textView = (FastTextView) convertView.findViewById(R.id.fast_text_view);
-
         convertView.setTag(viewHolder);
       }
 
