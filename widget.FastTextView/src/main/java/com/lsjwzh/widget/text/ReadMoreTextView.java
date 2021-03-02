@@ -8,7 +8,6 @@ import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
-import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.StaticLayout;
@@ -16,7 +15,6 @@ import android.text.StaticLayoutBuilderCompat;
 import android.text.TextPaint;
 import android.text.TextUtils;
 import android.text.style.ReplacementSpan;
-import android.text.util.Linkify;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -119,11 +117,8 @@ public class ReadMoreTextView extends FastTextView {
   protected StaticLayout makeLayout(CharSequence text, int maxWidth, boolean exactly) {
     mWithEllipsisLayout = super.makeLayout(text, maxWidth, exactly);
     SpannableStringBuilder textWithExtraEnd = new SpannableStringBuilder(text);
-    if (mLinkifyMask > 0) {
-      Linkify.addLinks(textWithExtraEnd, mLinkifyMask);
-    }
+    textWithExtraEnd.append(COLLAPSE_NORMAL);
     if (mCollapseSpan != null) {
-      textWithExtraEnd.append(COLLAPSE_NORMAL);
       textWithExtraEnd.setSpan(mCollapseSpan, textWithExtraEnd.length() - 1,
           textWithExtraEnd.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
     }
