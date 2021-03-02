@@ -6,7 +6,6 @@ import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Build;
 import android.support.annotation.NonNull;
@@ -17,7 +16,6 @@ import android.text.Layout;
 import android.text.LayoutUtils;
 import android.text.Spannable;
 import android.text.SpannableString;
-import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.StaticLayout;
 import android.text.StaticLayoutBuilderCompat;
@@ -25,13 +23,11 @@ import android.text.TextLayoutCache;
 import android.text.TextPaint;
 import android.text.TextUtils;
 import android.text.style.ReplacementSpan;
-import android.text.util.Linkify;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.MotionEvent;
-import java.util.regex.Pattern;
 
 /**
  * Simple and Fast TextView.
@@ -45,9 +41,6 @@ public class FastTextView extends FastTextLayoutView {
   private boolean mEnableLayoutCache = false; // experiment
   private EllipsisSpannedContainer mEllipsisSpanned;
   private int mCurTextColor;
-  protected boolean mCompressText;
-  protected int mLinkifyMask;
-  private int mLinkColor = Color.parseColor("#109DD0");
 
   public FastTextView(Context context) {
     this(context, null);
@@ -173,6 +166,7 @@ public class FastTextView extends FastTextLayoutView {
 
   @Override
   protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+    long start = System.currentTimeMillis();
     int width = MeasureSpec.getSize(widthMeasureSpec);
     boolean exactly = MeasureSpec.getMode(widthMeasureSpec) == MeasureSpec.EXACTLY;
     if (!exactly) {
@@ -203,6 +197,11 @@ public class FastTextView extends FastTextLayoutView {
           getMeasuredHeight(getPaddingTop() + getPaddingBottom() + height, heightMeasureSpec));
     } else {
       super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+    }
+
+    long end = System.currentTimeMillis();
+    if (BuildConfig.DEBUG) {
+      Log.d(TAG, "onMeasure cost:" + (end - start));
     }
   }
 
@@ -346,7 +345,7 @@ public class FastTextView extends FastTextLayoutView {
    * TypedValue} for the possible dimension units.
    *
    * @param textSize The desired size in the given units.
-   * @param unit The desired dimension unit.
+   * @param unit     The desired dimension unit.
    */
   public void setTextSize(float textSize, int unit) {
     float rawTextSize = TypedValue.applyDimension(
@@ -384,42 +383,8 @@ public class FastTextView extends FastTextLayoutView {
     mCustomEllipsisSpan = customEllipsisSpan;
   }
 
-  public void compressText(boolean enable) {
-    mCompressText = enable;
-  }
-
-  public void addLinks(int mask) {
-    mLinkifyMask = mask;
-    mTextPaint.linkColor = mLinkColor;
-  }
-
   @NonNull
   protected StaticLayout makeLayout(CharSequence text, int maxWidth, boolean exactly) {
-    if (mCompressText) {
-      SpannableStringBuilder ssb = new SpannableStringBuilder();
-      String[] patterns = Pattern.compile("\n").split(text);
-      int patternSize = patterns.length;
-      int realCount = 0;
-      for (int i = 0; i < patternSize; i++) {
-        realCount++;
-        if (patterns[i].isEmpty()) continue;
-        ssb.append(patterns[i]);
-        if (i < patternSize - 1) {
-          ssb.append("\n");
-        }
-      }
-      if (realCount >= mAttrsHelper.mMaxLines) {
-        ssb.append("\n").append("\n"); // extra line to fix ellipse symbol display
-      }
-      text = ssb;
-    } else {
-      text = new SpannableString(text); // also make text into SpannableString.
-    }
-
-    if (mLinkifyMask > 0) {
-      Linkify.addLinks((Spannable) text, mLinkifyMask);
-    }
-
     TextUtils.TruncateAt truncateAt = getTruncateAt();
     int layoutTargetWidth = maxWidth;
     int contentWidth = maxWidth;
@@ -429,6 +394,7 @@ public class FastTextView extends FastTextLayoutView {
     if (!exactly) {
       layoutTargetWidth = maxWidth > 0 ? Math.min(maxWidth, contentWidth) : contentWidth;
     }
+
 
     StaticLayoutBuilderCompat layoutBuilder = createStaticLayoutBuilder(text, 0, text
         .length(), mTextPaint, layoutTargetWidth);
@@ -474,8 +440,8 @@ public class FastTextView extends FastTextLayoutView {
   }
 
   protected StaticLayoutBuilderCompat createStaticLayoutBuilder(CharSequence source,
-      int start, int end,
-      TextPaint paint, int width) {
+                                                                int start, int end,
+                                                                TextPaint paint, int width) {
     return StaticLayoutBuilderCompat.obtain(source, start, end, paint, width);
   }
 
